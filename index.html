@@ -1,8 +1,3 @@
-<!--
-    Professional Portfolio for Spencer Boggs
-    Copyright (c) 2023 Spencer Boggs
--->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,40 +5,55 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poly Rabbotics Scouting</title>
     <link id="style" rel="stylesheet" href="style.css">
     <script defer src="index.js"></script>
-    <title>Spencer Boggs</title>
 </head>
 
-<body>
-    <section id="home"></section>
-    <div class="top">
-        <nav class="navbar">
-            <ul class="nav-links">
-                <a class="nav-button" href="#home">Home</a>
-                <a class="nav-button" href="#about">About</a>
-                <a class="nav-button" href="#work">Work</a>
-                <a class="nav-button" href="#contact">Contact</a>
-            </ul>
-        </nav>
-        <div class="home">
-            <h1 class="title" id="title">Hi! I'm Spencer Boggs</h1>
-            <p class="subtitle">An 18-year-old Software Engineer, Front-End Developer, and Ethical Hacker.</p>
-            <p class="learn-more"><a href="#about">Learn More</a>></p>
+<body id="menu" class="slide-in-left">
+
+    <!-- Event Selection Menu -->
+    <div class="container">
+        <h1>Season Events</h1>
+        <hr>
+        <h2>2023 Charged Up</h2>
+        <div class="buttons">
+            <button id="charged-up-pit">Pit Scouting</button>
+            <button id="charged-up-match">Match Scouting</button>
         </div>
-    </div>
-    <hr>
-    <section id="about"></section>
-    <div class="section">
-        <h2 class="section-title">About Me</h2>
-        <div class="paragraph-container">
-            <p class="paragraph">I'm an 18-year-old programmer who is enthusiastic about software engineering, front-end development, and</p> 
-            <p class="paragraph">pentesting. I'm currently searching for internships or part-time work to help me build experience and skills</p>
-            <p class="paragraph">in order to prepare for a career in this field. I am eager to contribute to the tech industry and to learn from</p>
-            <p class="paragraph">more experienced professionals.</p>
-        </div>
+        <hr>
     </div>
 
+    <!-- Options Menu -->
+    <div class="container">
+        <h1>Options</h1>
+        <hr>
+        <h3>Light / Dark Mode</h3>
+        <button style="margin-bottom: 20px;" id="dark-light-mode">Light Mode</button>
+        <hr>
+    </div>
+    <script>
+        // Add Animations and Swap Pages
+        const body = document.getElementById("menu");
+        document
+            .getElementById("charged-up-pit")
+            .addEventListener("click", function () {
+                body.classList.remove("slide-in-left");
+                body.classList.add("slide-out-left");
+                setTimeout(() => {
+                    window.location.href = "charged-up/pit.html";
+                }, 500);
+            });
+        document
+            .getElementById("charged-up-match")
+            .addEventListener("click", function () {
+                body.classList.remove("slide-in-left");
+                body.classList.add("slide-out-left");
+                setTimeout(() => {
+                    window.location.href = "charged-up/match.html";
+                }, 500);
+            });
+    </script>
 </body>
 
 </html>

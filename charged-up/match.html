@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" id="top">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charged Up - Match Scouting</title>
+    <link id="style" rel="stylesheet" href="../style.css">
+    <script defer src="../index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body class="slide-in-right">
+    <!-- Menu Buttons -->
+    <h1>Charged Up - Match Scouting</h1>
+    <div class="container">
+        <button id="back-button">Back to Menu</button>
+        <button id="clear-button" class="top-button">Clear Form</button>
+    </div>
+
+    <!-- Match Info Section -->
+    <div class="container">
+        <input type="number" id="match" placeholder="Match Number">
+        <input type="number" id="team" placeholder="Team Number">
+        
+        <!--! ADD MORE QUESTIONS HERE -->
+
+
+
+    </div>
+
+    <!-- User Info Section -->
+    <div class="container">
+        <p>Your Name:</p>
+        <input type="text" id="name" placeholder="Your Name">
+        <br>
+        <a href="#top"><button id="submit-button">Submit</button></a>
+    </div>
+
+    <script>
+        /**
+         * ! TO DO
+         * * Send data to GitHub repo
+         * 
+         * ! Make a way to view the data
+         * 
+         * ! TEST CODE ON HOME NETWORK
+         * ! ADD COOKIES FOR OFFLINE USE
+         * 
+         * ! ADD MORE INPUTS
+         * ! MORE INPUT METHODS (SLIDERS, CHECKBOXES, ETC.)
+         * 
+         * !! PROCESS GITHUB TOKEN TO HIDE IT
+         */
+        
+        // Clear Form Function
+        function clearForm() {
+            var inputs = document.getElementsByTagName("input");
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].type == "text") {
+                    inputs[i].value = "";
+                }
+                if (inputs[i].type == "number") {
+                    inputs[i].value = "0";
+                }
+            }
+        }
+
+
+        // SPECIAL INPUTS
+        
+        // Increment and Decrement Buttons
+        function increment() {
+            var number = parseInt(document.getElementById("counter").value);
+            document.getElementById("counter").value = number + 1;
+        }
+        function decrement() {
+            var number = parseInt(document.getElementById("counter").value);
+            if (number > 0) {
+                document.getElementById("counter").value = number - 1;
+            }
+        }
+
+
+        // BUTTONS
+
+        // Add Animations and Swap Pages
+        const body = document.querySelector("body");
+        document.getElementById("back-button").addEventListener("click", function () {
+            body.classList.remove("slide-in-right");
+            body.classList.add("slide-out-right");
+            setTimeout(function () {
+                window.location.href = "../index.html";
+            }, 500);
+        });
+        
+        // Clear Form Button
+        document.getElementById("clear-button").addEventListener("click", function () {
+            clearForm();
+        });
+
+        // Export the data
+        document.getElementById("submit-button").addEventListener("click", function () {
+            // Get all the inputs
+            const name = document.getElementById("name").value;
+            const match = document.getElementById("match").value;
+            const team = document.getElementById("team").value;
+
+            /** 
+             * ! ADD MORE INPUTS HERE 
+             */
+            //const counter = document.getElementById("counter").value;
+
+            const username = "Spinny2005";
+            const repo = "Scouting-Data";
+            const path = `charged-up/pit/${name}-${match}-${team}.json`;
+
+            // Add the inputs to a JSON object
+            const data = {
+                /**
+                 * ! ADD ALL INPUTS HERE
+                 */
+                "name": name,
+                "match": match,
+                "team": team,
+            };
+
+            // Convert the JSON object to a string
+            const dataString = JSON.stringify(data);
+            alert(dataString);
+
+            const content = btoa(JSON.stringify(data));
+
+            const token = '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'
+            axios({
+                method: 'post',
+                url: `https://api.github.com/repos/${username}/${repo}/contents/${path}`,
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+
+                },
+                data: {
+                    "message": "Add data",
+                    "content": content
+                }
+            })
+            .then(response => {
+                alert("Data Submitted");
+            })
+            .catch(error => {
+                alert("Error: " + error);
+            });  
+
+            clearForm();
+        });
+    </script>
+
+</body>
+
+</html>
