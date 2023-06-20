@@ -1,59 +1,156 @@
+<!--
+    Professional Portfolio for Spencer Boggs
+    Copyright (c) 2023 Spencer Boggs
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poly Rabbotics Scouting</title>
-    <link id="style" rel="stylesheet" href="style.css">
-    <script defer src="index.js"></script>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="icons/web_icon.png">
+	<link id="style" rel="stylesheet" href="style.css">
+	<script defer src="index.js"></script>
+	<title>Spencer Boggs</title>
 </head>
 
-<body id="menu" class="slide-in-left">
-
-    <!-- Event Selection Menu -->
-    <div class="container">
-        <h1>Season Events</h1>
-        <hr>
-        <h2>2023 Charged Up</h2>
-        <div class="buttons">
-            <button id="charged-up-pit">Pit Scouting</button>
-            <button id="charged-up-match">Match Scouting</button>
-        </div>
-        <hr>
-    </div>
-
-    <!-- Options Menu -->
-    <div class="container">
-        <h1>Options</h1>
-        <hr>
-        <h3>Light / Dark Mode</h3>
-        <button style="margin-bottom: 20px;" id="dark-light-mode">Light Mode</button>
-        <hr>
-    </div>
-    <script>
-        // Add Animations and Swap Pages
-        const body = document.getElementById("menu");
-        document
-            .getElementById("charged-up-pit")
-            .addEventListener("click", function () {
-                body.classList.remove("slide-in-left");
-                body.classList.add("slide-out-left");
-                setTimeout(() => {
-                    window.location.href = "charged-up/pit.html";
-                }, 500);
-            });
-        document
-            .getElementById("charged-up-match")
-            .addEventListener("click", function () {
-                body.classList.remove("slide-in-left");
-                body.classList.add("slide-out-left");
-                setTimeout(() => {
-                    window.location.href = "charged-up/match.html";
-                }, 500);
-            });
-    </script>
+<body>
+	<section id="home"></section>
+	<div class="top">
+		<nav class="navbar">
+			<ul class="nav-links">
+				<a class="nav-button" href="#home">Home</a>
+				<a class="nav-button" href="#about">About</a>
+				<a class="nav-button" href="#work">Work</a>
+				<a class="nav-button" href="#contact">Contact</a>
+			</ul>
+		</nav>
+		<div class="home">
+			<h1 class="title" id="title">Hi! I'm Spencer Boggs</h1>
+			<p class="subtitle">A Software Engineer and Front-End Developer.</p>
+			<p class="learn-more"><a href="#about">Learn More</a>></p>
+		</div>
+	</div>
+	<hr>
+	<section id="about"></section>
+	<div class="section">
+		<div class="about">
+			<h2 class="section-title">About Me</h2>
+			<div class="about-text">
+				<p class="about-paragraph">I am a software engineer and front-end developer from the United States. I
+					have been programming since I was 12 years old and primarily do software and web development. I am
+					currently a student at California State University, Long Beach where I am studying Computer Science.
+				</p>
+				<p class="about-paragraph">I am currently looking for a job in the software engineering or web
+					development fields. I am looking for a job that will allow me to grow as a developer and learn new
+					skills. I am also looking for a job that will allow me to work from home.
+				</p>
+			</div>
+			<h3 class="section-title">Tools and Languages</h3>
+			<div class="icon-container">
+				<a href="https://www.java.com/en/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/java.png" alt="Java"></a>
+				<a href="https://www.javascript.com/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/javascript.png" alt="JavaScript"></a>
+				<a href="https://nodejs.org/en/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/node_js.png" alt="NodeJS"></a>
+				<a href="https://reactjs.org/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/react_js.png" alt="ReactJS"></a>
+				<a href="https://www.python.org/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/python.png" alt="Python"></a>
+				<a href="https://html.com/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/html.png" alt="HTML5"></a>
+				<a href="https://www.w3schools.com/css/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/css.png" alt="CSS3"></a>
+				<a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/vscode.png" alt="VSCode"></a>
+				<a href="https://www.jetbrains.com/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/jet_brains.png" alt="Jet Brains"></a>
+				<a href="https://www.npmjs.com/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/npm.png" alt="NPM"></a>
+				<a href="https://git-scm.com/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/git.png" alt="Git"></a>
+				<a href="https://www.gnu.org/software/bash/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/bash.png" alt="Bash"></a>
+				<a href="https://gradle.org/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/gradle.png" alt="Gradle"></a>
+				<a href="https://www.arduino.cc/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/arduino.png" alt="Arduino"></a>
+				<a href="https://www.raspberrypi.com/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/raspberry_pi.png" alt="Raspberry Pi"></a>
+				<a href="https://www.linux.org/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/linux.png" alt="Linux"></a>
+			</div>
+			<h3 class="section-title">Social Accounts</h3>
+			<div class="icon-container">
+				<a href="https://github.com/spencerboggs" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/github.png" alt="GitHub"></a>
+				<a href="https://stackoverflow.com/users/20074074" target="_blank" rel="noopener noreferrer"><img
+						class="icon" src="icons/stack_overflow.png" alt="Stack Overflow"></a>
+				<a href="https://www.linkedin.com/in/spencer-boggs-02243025a/" target="_blank"
+					rel="noopener noreferrer"><img class="icon" src="icons/linkedin.png" alt="LinkedIn"></a>
+				<a href="https://leetcode.com/spencerboggs/" target="_blank" rel="noopener noreferrer"><img class="icon"
+						src="icons/leetcode.png" alt="LeetCode"></a>
+			</div>
+		</div>
+	</div>
+	<br>
+	<hr>
+	<section id="work"></section>
+	<div class="section">
+		<div class="work">
+			<h2 class="section-title">My Work</h2>
+			<a class="project-link" href="https://github.com" target="_blank" rel="noopener noreferrer">
+				<div class="project-container">
+					<h3 class="project-title">Project Title</h3>
+					<p class="project-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod error nam rem
+						voluptatum esse aspernatur sunt. Tempore minima officia commodi qui incidunt voluptatem fugit,
+						fugiat natus officiis similique eos? Delectus.</p>
+				</div>
+			</a>
+			<a class="project-link" href="https://github.com" target="_blank" rel="noopener noreferrer">
+				<div class="project-container">
+					<h3 class="project-title">Project Title</h3>
+					<p class="project-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas itaque amet
+						numquam aliquam nam nulla assumenda sequi veritatis quae non dignissimos veniam doloribus,
+						consectetur officia nesciunt excepturi eos dolorum suscipit.</p>
+				</div>
+			</a>
+			<a class="project-link" href="https://github.com" target="_blank" rel="noopener noreferrer">
+				<div class="project-container">
+					<h3 class="project-title">Project Title</h3>
+					<p class="project-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deleniti
+						repudiandae neque, beatae asperiores ipsa illo consequuntur commodi cum fuga temporibus porro
+						error suscipit amet voluptate, facere a dignissimos officiis laborum.</p>
+				</div>
+			</a>
+			<a class="project-link" href="https://github.com" target="_blank" rel="noopener noreferrer">
+				<div class="project-container">
+					<h3 class="project-title">Project Title</h3>
+					<p class="project-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Delectus quia quo
+						consequuntur asperiores tempora suscipit debitis error voluptatibus assumenda explicabo
+						praesentium perferendis modi sequi magnam distinctio quis, quam reiciendis voluptate.</p>
+				</div>
+			</a>
+		</div>
+	</div>
+	<br>
+	<hr>
+	<section id="contact"></section>
+	<div class="section">
+		<div class="contact">
+			<h2 class="section-title">Contact Me</h2>
+			<div class="contact-container">
+				<div class="contact-info">
+					<p class="contact-paragraph">Email: <u>spenceboggs@gmail.com</u></p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<hr>
 </body>
 
-</html>
+<html>
