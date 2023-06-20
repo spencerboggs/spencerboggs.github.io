@@ -1,6 +1,8 @@
 // switch to phonestyle.css on load if mobile
 if (window.innerWidth < 600) {
     document.getElementById("style").setAttribute("href", "phonestyle.css");
+} else {
+    document.getElementById("style").setAttribute("href", "style.css");
 }
 
 window.onload = function () {
