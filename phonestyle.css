@@ -156,6 +156,7 @@
 /* Elements */
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -221,6 +222,7 @@ section {
     top: 0;
     left: 0;
     z-index: 1;
+    padding-left: 2.5%;
 }
 
 .home {
@@ -391,35 +393,53 @@ section {
 .work {
     animation: text-fade-in 3s ease-in;
 }
-
 .project-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    align-items: left;
+    align-items: center;
     background-color: rgb(22, 22, 22);
     border-radius: 3px;
     padding-left: 20px;
-    max-width: 1600px;
     margin-bottom: 20px;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .project-container:hover {
     background-color: rgb(33, 33, 33);
-    animation: neon-effect 2s ease-in-out;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 1);
+    margin-right: 0;
 }
 
 .project-title {
-    font-size: 20px;
+    font-size: 17px;
 }
 
 .project-text {
     font-size: 16px;
     margin-top: -10px;
     padding-bottom: 10px;
+    max-width: 1600px;
+    margin-right: 50px;
 }
 
 .project-link {
     text-decoration: none;
+}
+
+.project-stats {
+    display: flex;
+    flex-direction: column;
+}
+
+.project-image {
+    width: 80%;
+    background-color: none;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    transition: 0.5s;
+    animation: opacity-fade-out 0.3s ease-in;
+    opacity: 0.8;
+    border-radius: 20%;
 }
