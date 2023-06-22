@@ -17,5 +17,5 @@ window.onload = function () {
             window.location.hash = '';
             window.location.hash = hash;
         }
-    }, 5000);
+    }, 3000);
 }
