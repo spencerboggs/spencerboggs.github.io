@@ -393,6 +393,7 @@ section {
 .work {
     animation: text-fade-in 3s ease-in;
 }
+
 .project-container {
     display: flex;
     flex-wrap: wrap;
@@ -442,4 +443,73 @@ section {
     animation: opacity-fade-out 0.3s ease-in;
     opacity: 0.8;
     border-radius: 20%;
+}
+
+
+.linktree {
+    animation: text-fade-in 2s ease-out;
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.linktree-title {
+    font-size: 24px;
+    margin-top: 40px;
+}
+
+.linktree-subtitle {
+    font-size: 12px;
+    margin-top: 0px;
+}
+
+.linktree hr {
+    width: 90%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #fff;
+    opacity: 0.5;
+}
+
+.linktree a {
+    text-decoration: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.linktree-button {
+    font-family: inherit;
+    --bg: #111111;
+    --text-color: #fff;
+    position: relative;
+    width: 90%;
+    border: none;
+    background: var(--bg);
+    color: var(--text-color);
+    padding: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.2s;
+    border-radius: 5px;
+    opacity: 0.8;
+    letter-spacing: 1px;
+    box-shadow: #f5f5f5 0px 7px 2px, #000 0px 8px 5px;
+    cursor: pointer;
+}
+
+.linktree-button:hover {
+    opacity: 1;
+}
+
+.linktree-button:active {
+    top: 4px;
+    box-shadow: #443f3e 0px 3px 2px, #000 0px 3px 5px;
 }
