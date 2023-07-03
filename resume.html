@@ -22,7 +22,7 @@
         body {
             height: 100%;
             max-width: 1056px;
-            
+
         }
 
         body {
@@ -37,6 +37,7 @@
             margin-left: 5%;
             min-width: 1056px;
             margin-right: 5%;
+            padding-right: 20px;
         }
 
         h1 {
@@ -123,7 +124,7 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            
+
         }
 
         .column {
@@ -146,13 +147,70 @@
             margin-top: 5px;
             letter-spacing: 1px;
         }
+
+        button {
+            margin-top: 20px;
+            margin-right: 10px;
+            position: relative;
+            background: none;
+            border: solid 1px #ffffff;
+            transition: linear 250ms;
+            width: 150px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+        }
+
+        button:is(:hover, :focus) {
+            color: #fff;
+        }
+
+        button::after {
+            position: absolute;
+            content: '';
+            inset: 0;
+            z-index: -1;
+            background-color: #3f3f3f;
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: linear 250ms;
+        }
+
+        button:is(:hover, :focus)::after {
+            transform: scale(1);
+        }
+
+        button a {
+            font-family: 'Verdana Bold', monospace;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: row;
+        }
     </style>
     <title>Spencer Boggs</title>
 </head>
 <!-- https://docs.google.com/document/d/1wSDyE4kEVxE-Zbehbq-HzT0uNVSVZpWYO5-haRN2cpk/edit -->
+
 <body>
     <div class="content">
-    <hr class="top">
+        <!-- Button to return to main page -->
+        <div class="buttons">
+            <button><a href="index.html">HOME</a></button>
+            <button><a href="index.html">DOWNLOAD</a></button>
+        </div>
+        <hr class="top">
         <h1>SPENCER</h1>
         <h1>BOGGS</h1>
         <p class="contact-info">spencerdboggs@gmail.com | 3105286758</p>
@@ -168,12 +226,16 @@
         </div>
         <div class="section">
             <h2 class="section-title">PROFESSIONAL SUMMARY</h2>
-            <p>I am a software engineer and front-end developer from the United States. I have been programming since I was 12 years
-            old and primarily do software and web development. I am currently a student at California State University, Long Beach
-            where I am studying Computer Science.</p>
+            <p>I am a software engineer and front-end developer from the United States. I have been programming since I
+                was 12 years
+                old and primarily do software and web development. I am currently a student at California State
+                University, Long Beach
+                where I am studying Computer Science.</p>
             <br>
-            <p>I am currently looking for a job in the software engineering or web development fields. I am looking for a job that will
-            allow me to grow as a developer and learn new skills. I am also looking for a job that will allow me to work from home.</p>
+            <p>I am currently looking for a job in the software engineering or web development fields. I am looking for
+                a job that will
+                allow me to grow as a developer and learn new skills. I am also looking for a job that will allow me to
+                work from home.</p>
         </div>
         <div class="section">
             <h2 class="section-title">SKILLS</h2>
@@ -252,7 +314,7 @@
             </li>
 
         </div>
-    <hr class="bottom">
+        <hr class="bottom">
     </div>
 </body>
 

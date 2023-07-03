@@ -6,10 +6,6 @@ if (window.innerWidth < 600) {
 }
 
 window.onload = function () {
-    if (window.location.pathname.endsWith('.html')) {
-        var newUrl = window.location.pathname.replace('.html', '');
-        window.history.replaceState(null, null, newUrl);
-    }
 
     setTimeout(function () {
         window.scrollTo(0, 0);
@@ -22,4 +18,9 @@ window.onload = function () {
             window.location.hash = hash;
         }
     }, 3000);
+
+    if (window.location.pathname.endsWith('.html') && !window.location.pathname.endsWith('index.html')) {
+        var newUrl = window.location.pathname.replace('.html', '');
+        window.history.replaceState(null, null, newUrl);
+    }
 }

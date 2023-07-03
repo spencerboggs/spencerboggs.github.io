@@ -513,3 +513,48 @@ section {
     top: 4px;
     box-shadow: #443f3e 0px 3px 2px, #000 0px 3px 5px;
 }
+
+.resume-button {
+    margin-top: 20px;
+    margin-bottom: -15px;
+    position: relative;
+    background: none;
+    border: solid 1px #ffffff;
+    transition: linear 250ms;
+    width: 100px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.resume-button:is(:hover, :focus) {
+    color: #fff;
+}
+
+.resume-button::after {
+    position: absolute;
+    content: '';
+    inset: 0;
+    z-index: -1;
+    background-color: #3f3f3f;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: linear 250ms;
+}
+
+.resume-button:is(:hover, :focus)::after {
+    transform: scale(1);
+}
+
+.resume-link {
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
