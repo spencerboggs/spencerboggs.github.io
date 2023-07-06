@@ -510,7 +510,7 @@ section {
     background: none;
     border: solid 1px #ffffff;
     transition: linear 250ms;
-    width: 100px;
+    width: 120px;
     height: 40px;
     display: flex;
     justify-content: center;
@@ -538,6 +538,7 @@ section {
 }
 
 .resume-link {
+    font-family: 'Roboto Mono', monospace;
     text-decoration: none;
     display: block;
     width: 100%;
