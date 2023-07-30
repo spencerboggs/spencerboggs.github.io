@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💕 Flappy Unicorn 💕</title>
-    <script defer src="../index.js"></script>
+    <!-- <script defer src="../index.js"></script> -->
     <style>
         * {
             padding: 0;
@@ -73,7 +73,7 @@
             background-color: black;
             position: relative;
             left: 400px;
-            animation: block 2s infinite linear;
+            /* animation: block 2s infinite linear; */
         }
 
         @keyframes block {
@@ -93,7 +93,7 @@
             position: relative;
             left: 400px;
             top: -500px;
-            animation: block 2s infinite linear;
+            /* animation: block 2s infinite linear; */
         }
 
         #unicorn {
@@ -125,6 +125,10 @@
     var score = 0;
     var highscore = 0;
 
+    // animate the block and hole
+    block.style.animation = "block 2s infinite linear";
+    hole.style.animation = "block 2s infinite linear";
+
     hole.addEventListener('animationiteration', () => {
         var random = -((Math.random() * 300) + 150);
         var top = (random * 100) + 150;
@@ -139,16 +143,11 @@
         }
         if (unicornTop > 480) {
             unicorn.style.top = 100 + "px";
-            /* setTimeout(() => {
-                hole.style.animation = "none";
-                block.style.animation = "none";
-                hole.style.left = 400 + "px";
-                block.style.left = 400 + "px";
-            }, 10);
-            hole.style.animation = "block 2s infinite linear";
-            block.style.animation = "block 2s infinite linear"; */
             score = 0;
         }
+        
+        block.style.animation = "block 2s infinite linear";
+        hole.style.animation = "block 2s infinite linear";  
     }, 10);
 
     document.addEventListener("keydown", function (event) {
