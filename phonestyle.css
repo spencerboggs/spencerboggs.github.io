@@ -445,7 +445,6 @@ section {
     border-radius: 20%;
 }
 
-
 .linktree {
     animation: text-fade-in 2s ease-out;
     font-family: inherit;
@@ -512,7 +511,7 @@ section {
 .linktree-button:active {
     top: 4px;
     box-shadow: #443f3e 0px 3px 2px, #000 0px 3px 5px;
-}
+} 
 
 .resume-button {
     margin-top: 20px;

@@ -18,8 +18,19 @@
             src: url('fonts/verdanab.ttf');
         }
 
+        @keyframes fade-in {
+            /* fade from black */
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
         html,
         body {
+            background-color: #1d1818;
             height: 100%;
             max-width: 1056px;
         }
@@ -45,6 +56,7 @@
             min-width: 1056px;
             margin-right: 5%;
             padding-right: 20px;
+            animation: fade-in 1s ease-in;
         }
 
         h1 {
