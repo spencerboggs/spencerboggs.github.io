@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💕 Message Calendar 💕</title>
-    <script defer src="../index.js"></script>
+    <!-- <script defer src="../index.js"></script> -->
     <style>
         body {
             display: flex;
@@ -47,9 +47,25 @@
             background-color: #ffb8df;
         }
 
+        img {
+            width: 500px;
+            height: 300px;
+            object-fit: cover;
+            margin: 0;
+            margin-top: 50px;
+        }
+
         @media only screen and (max-width: 500px) {
+            body {
+                overflow: hidden;
+            }
             h1 {
-                font-size: 30px;
+                font-size: 25px;
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                width: 90%;
+                margin-top: -150px;
             }
 
             h2 {
@@ -59,6 +75,19 @@
             button {
                 font-size: 15px;
             }
+
+            img {
+                width: 300px;
+                height: 180px;
+                margin-top: 20px;
+            }
+
+            .image-div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+            }
         }
 
     </style>
@@ -67,6 +96,10 @@
 <body>
     <h1 id="message"></h1>
     <h2 id="date"></h2>
+    <div class="image-div">
+        <img id="puppy" src="./puppies/default.jpg"></img>
+        <img id="image" src="./images/default.jpg"></img>
+    </div>
     <div>
         <button id="previous">Previous Message</button>
         <button id="current">Current Message</button>
@@ -89,7 +122,7 @@
         "8/2/2023": "You make my heart feel perfect 💕",
         "8/3/2023": "I'm so lucky to have you :) 💖",
         "8/4/2023": "I'll love you forever and ever 😊💕",
-        "8/5/2023": "You're everthing to me :)",
+        "8/5/2023": "You're everything to me :)",
         "8/6/2023": "I love you my squishy ❤️",
         "8/7/2023": "You're the best thing that's ever happened to me 💕",
         "8/8/2023": "I love you more than everything ever 😊💖",
@@ -103,13 +136,26 @@
         "8/16/2023": "You're my best friend ever. Forever. 😊💕",
         "8/17/2023": "I'll love you no matter what ❤️",
         "8/18/2023": "Being with you is my favorite thing ever 💕",
+        "8/19/2023": "I miss you. I can't wait to see you again ❤️",
+        "8/20/2023": "I love you more than anything in the world 😊💖",
+        "8/21/2023": "You're my favorite person ever 💕",
+        "8/22/2023": "I want to spend the rest of my life with you ❤️",
     }
+
 
     /* Check to see if the key is the same as the day */
     if (messages[month + "/" + day + "/" + year]) {
         document.getElementById("message").innerHTML = messages[month + "/" + day + "/" + year];
     } else {
         document.getElementById("message").innerHTML = "No message for today!";
+    }
+
+    if (messages[month + "/" + day + "/" + year]) {
+        document.getElementById("image").src = "images/" + month + "-" + day + "-" + year + ".jpg";
+        document.getElementById("puppy").src = "puppies/" + month + "-" + day + "-" + year + ".jpg";
+    } else {
+        document.getElementById("puppy").src = "puppies/default.jpg";
+        document.getElementById("image").src = "images/default.jpg";
     }
 
     /* Display the date */
@@ -138,7 +184,15 @@
             } else {
                 day--;
             }
+            // update message, puppy, image, and date
             document.getElementById("message").innerHTML = messages[month + "/" + day + "/" + year];
+            document.getElementById("image").src = "images/" + month + "-" + day + "-" + year + ".jpg";
+            document.getElementById("puppy").src = "puppies/" + month + "-" + day + "-" + year + ".jpg";
+            // for every day before 8/15/2023, set the image to the default image
+            if (month < 8 || (month == 8 && day < 15)) {
+                document.getElementById("puppy").src = "puppies/default.jpg";
+                document.getElementById("image").src = "images/default.jpg";
+            }
             document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
         }
     });
@@ -151,6 +205,8 @@
         year = date.getFullYear();
 
         document.getElementById("message").innerHTML = messages[month + "/" + day + "/" + year];
+        document.getElementById("image").src = "images/" + month + "-" + day + "-" + year + ".jpg";
+        document.getElementById("puppy").src = "puppies/" + month + "-" + day + "-" + year + ".jpg";
         document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
     });
 
