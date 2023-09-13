@@ -75,6 +75,8 @@
 
             button {
                 font-size: 15px;
+                /* make it smaller */
+                width: 100px;
             }
 
             img {
@@ -102,6 +104,7 @@
     </div>
     <div>
         <button id="previous">Previous Message</button>
+        <button id="next">Next Message</button>
         <button id="current">Current Message</button>
     </div>
 </body>
@@ -215,6 +218,26 @@
                 document.getElementById("puppy").src = "puppies/default.jpg";
                 document.getElementById("image").src = "images/default.jpg";
             }
+            document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+        }
+    });
+
+    /* Add event listener to the next button */
+    document.getElementById("next").addEventListener("click", function () {
+        let currentDate = new Date();
+        let nextDate = new Date(year, month - 1, day);
+        nextDate.setDate(nextDate.getDate() + 1);
+
+        // Check if the next date is not in the future (current date)
+        if (nextDate <= currentDate) {
+            day = nextDate.getDate();
+            month = nextDate.getMonth() + 1;
+            year = nextDate.getFullYear();
+
+            // update message, puppy, image, and date
+            document.getElementById("message").innerHTML = messages[month + "/" + day + "/" + year];
+            document.getElementById("image").src = "images/" + month + "-" + day + "-" + year + ".jpg";
+            document.getElementById("puppy").src = "puppies/" + month + "-" + day + "-" + year + ".jpg";
             document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
         }
     });
