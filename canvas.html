@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,21 +10,25 @@
             font-family: 'Roboto Mono';
             src: url('fonts/RobotoMono-VariableFont_wght.ttf');
         }
+
         html {
             font-family: 'Roboto Mono', monospace;
             color: #dddddd;
             background-color: #121212;
         }
+
         h1 {
             margin-left: 1%;
         }
+
         table {
             border-collapse: collapse;
             width: 98%;
             margin: 20px auto;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #c0c0c0;
             padding: 8px;
             text-align: center;
@@ -34,6 +39,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Canvas Assignment Calendar</h1>
     <table>
@@ -48,14 +54,14 @@
 
         // Function to fetch courses using Canvas API
         async function fetchCanvasCourses() {
-            const response = await fetch(`https://your-canvas-instance/api/v1/courses?access_token=${canvasApiKey}`);
+            const response = await fetch(`https://csulb.instructure.com/api/v1/courses?access_token=${canvasApiKey}`);
             const courses = await response.json();
             return courses;
         }
 
         // Function to fetch assignments for a specific course
         async function fetchAssignmentsForCourse(courseId) {
-            const response = await fetch(`https://your-canvas-instance/api/v1/courses/${courseId}/assignments?access_token=${canvasApiKey}`);
+            const response = await fetch(`https://csulb.instructure.com/api/v1/courses/${courseId}/assignments?access_token=${canvasApiKey}`);
             const assignments = await response.json();
             return assignments;
         }
@@ -115,4 +121,5 @@
         displayAssignmentsForAllCourses();
     </script>
 </body>
+
 </html>
