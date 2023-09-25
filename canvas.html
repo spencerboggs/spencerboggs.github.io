@@ -63,6 +63,7 @@
         // Function to display assignments below their due dates
         async function displayAssignmentsForAllCourses() {
             const courses = await fetchCanvasCourses();
+            console.log(courses);
 
             for (let i = 0; i < 7; i++) {
                 const date = new Date(startDate);
