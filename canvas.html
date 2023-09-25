@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Assignment Calendar</title>
+    <style>
+        @font-face {
+            font-family: 'Roboto Mono';
+            src: url('fonts/RobotoMono-VariableFont_wght.ttf');
+        }
+        html {
+            font-family: 'Roboto Mono', monospace;
+            color: #dddddd;
+            background-color: #121212;
+        }
+        h1 {
+            margin-left: 1%;
+        }
+        table {
+            border-collapse: collapse;
+            width: 98%;
+            margin: 20px auto;
+        }
+
+        th, td {
+            border: 1px solid #c0c0c0;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #808080;
+        }
+    </style>
+</head>
+<body>
+    <h1>Canvas Assignment Calendar</h1>
+    <table>
+        <tr id="dateRow">
+        </tr>
+    </table>
+    <script>
+        const canvasApiKey = '21139~y3rFStdmQu7Tp4oW5pE9NPth19lpo2W71p6aZzju0yIgemNM9iQ6xrL9CXqxDJHI'; // Replace with your Canvas API key
+        const startDate = new Date(); // Set your desired start date here
+        const tableRowDates = document.getElementById("dateRow");
+        const tableRowAssignments = document.getElementById("assignmentsRow");
+
+        // Function to fetch courses using Canvas API
+        async function fetchCanvasCourses() {
+            const response = await fetch(`https://your-canvas-instance/api/v1/courses?access_token=${canvasApiKey}`);
+            const courses = await response.json();
+            return courses;
+        }
+
+        // Function to fetch assignments for a specific course
+        async function fetchAssignmentsForCourse(courseId) {
+            const response = await fetch(`https://your-canvas-instance/api/v1/courses/${courseId}/assignments?access_token=${canvasApiKey}`);
+            const assignments = await response.json();
+            return assignments;
+        }
+
+        // Function to display assignments below their due dates
+        async function displayAssignmentsForAllCourses() {
+            const courses = await fetchCanvasCourses();
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`;
+                const cellDate = document.createElement("td");
+                cellDate.textContent = formattedDate;
+                tableRowDates.appendChild(cellDate);
+
+                const cellAssignments = document.createElement("td");
+                const assignmentList = document.createElement("ul");
+
+                // Display assignments for each course
+                for (const course of courses) {
+                    const courseId = course.id;
+                    const assignments = await fetchAssignmentsForCourse(courseId);
+                    const dueAssignments = assignments.filter(assignment => {
+                        const dueDate = new Date(assignment.due_at);
+                        return (
+                            dueDate.getDate() === date.getDate() &&
+                            dueDate.getMonth() === date.getMonth() &&
+                            dueDate.getFullYear() === date.getFullYear()
+                        );
+                    });
+
+                    if (dueAssignments.length > 0) {
+                        const courseName = course.name;
+                        const courseList = document.createElement("li");
+                        courseList.textContent = courseName;
+                        const courseAssignmentList = document.createElement("ul");
+
+                        dueAssignments.forEach(assignment => {
+                            const listItem = document.createElement("li");
+                            listItem.textContent = assignment.name;
+                            courseAssignmentList.appendChild(listItem);
+                        });
+
+                        courseList.appendChild(courseAssignmentList);
+                        assignmentList.appendChild(courseList);
+                    }
+                }
+
+                cellAssignments.appendChild(assignmentList);
+                tableRowAssignments.appendChild(cellAssignments);
+            }
+        }
+
+        // Call the function to display assignments for all courses
+        displayAssignmentsForAllCourses();
+    </script>
+</body>
+</html>
