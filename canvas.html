@@ -41,85 +41,78 @@
 </head>
 
 <body>
-    <h1>Canvas Assignment Calendar</h1>
-    <table>
-        <tr id="dateRow">
-        </tr>
-    </table>
-    <script>
-        const canvasApiKey = '21139~y3rFStdmQu7Tp4oW5pE9NPth19lpo2W71p6aZzju0yIgemNM9iQ6xrL9CXqxDJHI'; // Replace with your Canvas API key
-        const startDate = new Date(); // Set your desired start date here
-        const tableRowDates = document.getElementById("dateRow");
-        const tableRowAssignments = document.getElementById("assignmentsRow");
+    <!-- Add a button to trigger the API fetch -->
+<button id="fetchButton">Fetch Data</button>
+<h1>Canvas Assignment Calendar</h1>
+<table>
+    <tr id="dateRow">
+    </tr>
+</table>
 
-        // Function to fetch courses using Canvas API
-        async function fetchCanvasCourses() {
-            const response = await fetch(`https://csulb.instructure.com/api/v1/courses?access_token=${canvasApiKey}`);
-            const courses = await response.json();
-            return courses;
-        }
+<!-- Add this script to your HTML -->
+<script>
+    const startDate = new Date(); // Set your desired start date here
+    const tableRowDates = document.getElementById("dateRow");
 
-        // Function to fetch assignments for a specific course
-        async function fetchAssignmentsForCourse(courseId) {
-            const response = await fetch(`https://csulb.instructure.com/api/v1/courses/${courseId}/assignments?access_token=${canvasApiKey}`);
-            const assignments = await response.json();
-            return assignments;
-        }
+    // Function to fetch assignments for a specific course
+    async function fetchAssignmentsForCourse(courseId) {
+        const response = await fetch(`https://csulb.instructure.com/api/v1/courses/${courseId}/assignments`);
+        const assignments = await response.json();
+        return assignments;
+    }
 
-        // Function to display assignments below their due dates
-        async function displayAssignmentsForAllCourses() {
-            const courses = await fetchCanvasCourses();
-            console.log(courses);
+    // Function to display assignments below their due dates
+    async function displayAssignmentsForAllCourses() {
+        const canvasCourses = [1, 2, 3]; // Replace with the actual course IDs you want to fetch
 
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(startDate);
-                date.setDate(startDate.getDate() + i);
-                const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`;
-                const cellDate = document.createElement("td");
-                cellDate.textContent = formattedDate;
-                tableRowDates.appendChild(cellDate);
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(startDate);
+            date.setDate(startDate.getDate() + i);
+            const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`;
+            const cellDate = document.createElement("td");
+            cellDate.textContent = formattedDate;
+            tableRowDates.appendChild(cellDate);
 
-                const cellAssignments = document.createElement("td");
-                const assignmentList = document.createElement("ul");
+            const cellAssignments = document.createElement("td");
+            const assignmentList = document.createElement("ul");
 
-                // Display assignments for each course
-                for (const course of courses) {
-                    const courseId = course.id;
-                    const assignments = await fetchAssignmentsForCourse(courseId);
-                    const dueAssignments = assignments.filter(assignment => {
-                        const dueDate = new Date(assignment.due_at);
-                        return (
-                            dueDate.getDate() === date.getDate() &&
-                            dueDate.getMonth() === date.getMonth() &&
-                            dueDate.getFullYear() === date.getFullYear()
-                        );
+            // Display assignments for each course
+            for (const courseId of canvasCourses) {
+                const assignments = await fetchAssignmentsForCourse(courseId);
+                const dueAssignments = assignments.filter(assignment => {
+                    const dueDate = new Date(assignment.due_at);
+                    return (
+                        dueDate.getDate() === date.getDate() &&
+                        dueDate.getMonth() === date.getMonth() &&
+                        dueDate.getFullYear() === date.getFullYear()
+                    );
+                });
+
+                if (dueAssignments.length > 0) {
+                    const courseName = `Course ${courseId}`; // Replace with course names
+                    const courseList = document.createElement("li");
+                    courseList.textContent = courseName;
+                    const courseAssignmentList = document.createElement("ul");
+
+                    dueAssignments.forEach(assignment => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = assignment.name;
+                        courseAssignmentList.appendChild(listItem);
                     });
 
-                    if (dueAssignments.length > 0) {
-                        const courseName = course.name;
-                        const courseList = document.createElement("li");
-                        courseList.textContent = courseName;
-                        const courseAssignmentList = document.createElement("ul");
-
-                        dueAssignments.forEach(assignment => {
-                            const listItem = document.createElement("li");
-                            listItem.textContent = assignment.name;
-                            courseAssignmentList.appendChild(listItem);
-                        });
-
-                        courseList.appendChild(courseAssignmentList);
-                        assignmentList.appendChild(courseList);
-                    }
+                    courseList.appendChild(courseAssignmentList);
+                    assignmentList.appendChild(courseList);
                 }
-
-                cellAssignments.appendChild(assignmentList);
-                tableRowAssignments.appendChild(cellAssignments);
             }
-        }
 
-        // Call the function to display assignments for all courses
-        displayAssignmentsForAllCourses();
-    </script>
+            cellAssignments.appendChild(assignmentList);
+            tableRowDates.appendChild(cellAssignments);
+        }
+    }
+
+    // Add an event listener to the button to trigger the API fetch
+    document.getElementById('fetchButton').addEventListener('click', displayAssignmentsForAllCourses);
+</script>
 </body>
 
 </html>
