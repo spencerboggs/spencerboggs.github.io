@@ -163,7 +163,7 @@
         "9/9/2023": "I LOVE YOU MY SQUISHY ❤️",
         "9/10/2023": "I can't wait to get a puppy with you 😊💖",
         "9/11/2023": "Moment of silence",
-        "9/12/2023": "Youre gonna feel so good this weekend 😈",
+        "9/12/2023": "This one was horny and this website technically is public so it's not going on here.",
         "9/13/2023": "I'm going to marry you someday ❤️",
         "9/23/2023": "I love you so much baby ❤️",
         "9/24/2023": "I can't wait to see you again 😊💖",
@@ -180,6 +180,8 @@
         "10/7/2023": "I love youuuuuuuuu ❤️ I want you forever :)",
         "10/8/2023": "12 days! EEEEEEE. I'll see you soon baby ❤️💖",
         "10/9/2023": "I can't wait to hold you again :)",
+        "10/10/2023": "I love you so much my squishy ❤️",
+        "10/11/2023": "I can't wait to see you again 😊💖",
         "2/25/2024": "I LOVE YOU MORE THAN EVERYTHING FOREVER, SYDNEY! ❤️💖"
     }
 
@@ -202,47 +204,48 @@
     /* Display the date */
     document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
 
-    /* Add event listener to the pervious button */
     document.getElementById("previous").addEventListener("click", function () {
-        if (month == 7 && day == 28 && year == 2023) {
-            document.getElementById("message").innerHTML = "No previous message!";
-            document.getElementById("date").innerHTML = "";
-        } else {
-            if (day == 1) {
-                if (month == 8 || month == 10 || month == 12) {
-                    day = 31;
-                    month--;
-                } else if (month == 5 || month == 7) {
-                    day = 30;
-                    month--;
-                } else if (month == 3) {
-                    day = 28;
-                    month--;
-                } else {
-                    day = 31;
-                    month--;
-                }
-            } else {
-                day--;
+        var previousDate = new Date(year, month - 1, day - 1);
+
+        // Iterate backwards to find the last previous date with a message
+        while (!(previousDate.getMonth() + 1 + "/" + previousDate.getDate() + "/" + previousDate.getFullYear() in messages)) {
+            previousDate.setDate(previousDate.getDate() - 1);
+            // if the previous date is before 7/28/2023, break
+            if (previousDate < new Date(2023, 6, 28)) {
+                break;
             }
-            // update message, puppy, image, and date
-            document.getElementById("message").innerHTML = messages[month + "/" + day + "/" + year];
-            document.getElementById("image").src = "images/" + month + "-" + day + "-" + year + ".jpg";
-            document.getElementById("puppy").src = "puppies/" + month + "-" + day + "-" + year + ".jpg";
-            // for every day before 8/15/2023, set the image to the default image
-            if (month < 8 || (month == 8 && day < 15)) {
-                document.getElementById("puppy").src = "puppies/default.jpg";
-                document.getElementById("image").src = "images/default.jpg";
-            }
-            document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
+
         }
+
+        year = previousDate.getFullYear();
+        month = previousDate.getMonth() + 1;
+        day = previousDate.getDate();
+
+        // Update message, puppy, image, and date
+        document.getElementById("message").innerHTML = messages[month + "/" + day + "/" + year];
+        document.getElementById("image").src = "images/" + month + "-" + day + "-" + year + ".jpg";
+        document.getElementById("puppy").src = "puppies/" + month + "-" + day + "-" + year + ".jpg";
+        // For every day before 8/15/2023, set the image to the default image
+        if (month < 8 || (month == 8 && day < 15)) {
+            document.getElementById("puppy").src = "puppies/default.jpg";
+            document.getElementById("image").src = "images/default.jpg";
+        }
+        document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
     });
 
-    /* Add event listener to the next button */
+
     document.getElementById("next").addEventListener("click", function () {
         let currentDate = new Date();
-        let nextDate = new Date(year, month - 1, day);
-        nextDate.setDate(nextDate.getDate() + 1);
+        let nextDate = new Date(year, month - 1, day + 1);
+
+        // Iterate forwards to find the next date with a message
+        while (!(nextDate.getMonth() + 1 + "/" + nextDate.getDate() + "/" + nextDate.getFullYear() in messages)) {
+            nextDate.setDate(nextDate.getDate() + 1);
+            // if the next date is in the future, break
+            if (nextDate > currentDate) {
+                break;
+            }
+        }
 
         // Check if the next date is not in the future (current date)
         if (nextDate <= currentDate) {
@@ -257,6 +260,7 @@
             document.getElementById("date").innerHTML = month + "/" + day + "/" + year;
         }
     });
+
 
     /* Add event listener to the current button */
     document.getElementById("current").addEventListener("click", function () {
