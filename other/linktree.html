@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icons/web_icon.png">
+    <link id="style" rel="stylesheet" href="style.css">
+    <style>
+        @keyframes swipe {
+            0% {
+                transform: translateX(0%);
+            }
+
+            100% {
+                transform: translateX(-150%);
+            }
+        }
+
+        .linktree {
+            zoom: 1.5;
+            animation: text-fade-in 1s ease-in;
+            font-family: inherit;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .linktree-title {
+            font-size: 36px;
+            margin-top: 40px;
+        }
+
+        .linktree-subtitle {
+            font-size: 20px;
+            margin-bottom: 10px;
+            margin-top: 0px;
+        }
+
+        .linktree hr {
+            width: 500px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #fff;
+            opacity: 0.5;
+        }
+
+        .linktree a {
+            text-decoration: none;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        .linktree-button {
+            font-family: inherit;
+            width: 500px;
+            height: 40px;
+            box-shadow: rgb(94, 94, 94) 5px 5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .linktree-button:hover {}
+
+        .linktree-button:active {
+            box-shadow: #443f3e 0px 3px 2px, #000 0px 3px 5px;
+        }
+    </style>
+    <script defer src="index.js"></script>
+    <title>Spencer Boggs</title>
+</head>
+
+<body>
+    <div class="linktree">
+        <h1 class="linktree-title">Spencer Boggs</h1>
+        <h2 class="linktree-subtitle">Software Engineer and Front-End Developer</h2>
+        <hr>
+        <button class="linktree-button" id="website-about">About Me</button>
+        <hr>
+        <button class="linktree-button" id="website-projects">My Work</button>
+        <hr>
+        <button class="linktree-button" id="resume">Resume</button>
+        <hr>
+        <button class="linktree-button" id="linkedin">LinkedIn</button>
+        <hr>
+        <button class="linktree-button" id="github">GitHub</button>
+        <hr>
+        <button class="linktree-button" id="instagram">Instagram</button>
+        <hr>
+    </div>
+    <script>
+        const website_about = document.getElementById("website-about");
+        website_about.addEventListener("click", () => {
+            document.querySelector(".linktree").style.animation = "swipe 1.3s ease-in";
+            setTimeout(() => {
+                window.location.href = "https://spencerboggs.github.io#about";
+            }, 950);
+        });
+        const website_projects = document.getElementById("website-projects");
+        website_projects.addEventListener("click", () => {
+            document.querySelector(".linktree").style.animation = "swipe 1.3s ease-in";
+            setTimeout(() => {
+                window.location.href = "https://spencerboggs.github.io#work";
+            }, 950);
+        });
+        const resume = document.getElementById("resume");
+        resume.addEventListener("click", () => {
+            document.querySelector(".linktree").style.animation = "swipe 1.3s ease-in";
+            setTimeout(() => {
+                window.location.href = "https://spencerboggs.github.io/resume.html";
+            }, 950);
+        });
+        const linkedin = document.getElementById("linkedin");
+        linkedin.addEventListener("click", () => {
+            document.querySelector(".linktree").style.animation = "swipe 1.3s ease-in";
+            setTimeout(() => {
+                window.location.href = "https://www.linkedin.com/in/spencer-boggs-02243025a/";
+            }, 950);
+        });
+        const github = document.getElementById("github");
+        github.addEventListener("click", () => {
+            document.querySelector(".linktree").style.animation = "swipe 1.3s ease-in";
+            setTimeout(() => {
+                window.location.href = "https://github.com/spencerboggs";
+            }, 950);
+        });
+        const instagram = document.getElementById("instagram");
+        instagram.addEventListener("click", () => {
+            document.querySelector(".linktree").style.animation = "swipe 1.3s ease-in";
+            setTimeout(() => {
+                window.location.href = "https://www.instagram.com/spin_boggs/";
+            }, 950);
+        });
+    </script>
+</body>

@@ -105,11 +105,11 @@
 
 @keyframes text-fade-in {
     0% {
-        opacity: 0;
+        opacity: 0.5;
     }
 
     90% {
-        opacity: 0;
+        opacity: 0.5;
     }
 
     100% {
@@ -326,7 +326,7 @@ section {
 
 .section-title {
     margin-top: 40px;
-    animation: swipe-in 3.5s ease-out;
+    /* animation: swipe-in 3.5s ease-out; */
 }
 
 .section-title h2 {

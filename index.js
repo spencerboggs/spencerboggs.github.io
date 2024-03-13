@@ -23,4 +23,6 @@ window.onload = function () {
         var newUrl = window.location.pathname.replace('.html', '');
         window.history.replaceState(null, null, newUrl);
     }
+    
+    
 }
