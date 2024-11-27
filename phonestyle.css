@@ -513,14 +513,23 @@ section {
     box-shadow: #443f3e 0px 3px 2px, #000 0px 3px 5px;
 } 
 
-.resume-button {
+.about-buttons-div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    align-items: center;
+    max-width: 1200px;
+    gap: 20px;
+}
+
+.about-button {
     margin-top: 20px;
     margin-bottom: -15px;
     position: relative;
     background: none;
     border: solid 1px #ffffff;
     transition: linear 250ms;
-    width: 100%;
+    width: 200px;
     height: 40px;
     display: flex;
     justify-content: center;
@@ -528,11 +537,11 @@ section {
     font-size: 1rem;
 }
 
-.resume-button:is(:hover, :focus) {
+.about-button:is(:hover, :focus) {
     color: #fff;
 }
 
-.resume-button::after {
+.about-button::after {
     position: absolute;
     content: '';
     inset: 0;
@@ -543,7 +552,7 @@ section {
     transition: linear 250ms;
 }
 
-.resume-button:is(:hover, :focus)::after {
+.about-button:is(:hover, :focus)::after {
     transform: scale(1);
 }
 
