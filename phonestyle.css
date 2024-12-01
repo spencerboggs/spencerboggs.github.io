@@ -225,12 +225,31 @@ section {
     padding-left: 2.5%;
 }
 
+.profile-div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 100px;
+    margin-bottom: -60px;
+}
+
+.profile-image {
+    width: 300px;
+    border-radius: 50%;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    animation: fade-in 2s linear;
+}
+
 .home {
     font-family: inherit;
     color: inherit;
     background-color: inherit;
-    margin-top: 175px;
-    margin-left: 5%;
+    margin-left: 20px;
     letter-spacing: 1px;
     display: flex;
     flex-direction: column;
