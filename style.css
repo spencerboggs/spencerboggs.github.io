@@ -159,14 +159,12 @@ body {
     margin: auto;
 }
 
-/* center the whole thing if the page is over 500px */
 @media (min-width: 1300px) {
     body {
         width: 1300px;
     }
 }
 
-/* else keep it 100% */
 @media (max-width: 1300px) {
     body {
         width: 100%
@@ -428,58 +426,6 @@ section {
     animation: text-fade-in 3s ease-in;
 }
 
-.project-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: center;
-    background-color: rgb(22, 22, 22);
-    border-radius: 3px;
-    padding-left: 20px;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.project-container:hover {
-    background-color: rgb(33, 33, 33);
-}
-
-.project-title {
-    font-size: 20px;
-}
-
-.project-text {
-    font-size: 16px;
-    margin-top: -10px;
-    padding-bottom: 10px;
-    max-width: 1600px;
-    margin-right: 50px;
-}
-
-.project-link {
-    text-decoration: none;
-}
-
-.project-stats {
-    display: flex;
-    flex-direction: column;
-}
-
-.project-image {
-    height: 120px;
-    margin-right: 200px;
-    background-color: none;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    transition: 0.5s;
-    animation: opacity-fade-out 0.3s ease-in;
-    opacity: 0.8;
-    border-radius: 20%;
-}
-
 .about-buttons-div {
     display: flex;
     flex-wrap: wrap;
@@ -532,4 +478,18 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.project {
+    animation: text-fade-in 3s ease-in;
+    margin-bottom: 35px;
+}
+
+.project h3 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.project p {
+    margin-top: 10px;
 }

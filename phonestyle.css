@@ -413,57 +413,6 @@ section {
     animation: text-fade-in 3s ease-in;
 }
 
-.project-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: center;
-    background-color: rgb(22, 22, 22);
-    border-radius: 3px;
-    padding-left: 20px;
-    margin-bottom: 20px;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.project-container:hover {
-    background-color: rgb(33, 33, 33);
-    margin-right: 0;
-}
-
-.project-title {
-    font-size: 17px;
-}
-
-.project-text {
-    font-size: 16px;
-    margin-top: -10px;
-    padding-bottom: 10px;
-    max-width: 1600px;
-    margin-right: 50px;
-}
-
-.project-link {
-    text-decoration: none;
-}
-
-.project-stats {
-    display: flex;
-    flex-direction: column;
-}
-
-.project-image {
-    width: 80%;
-    background-color: none;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    transition: 0.5s;
-    animation: opacity-fade-out 0.3s ease-in;
-    opacity: 0.8;
-    border-radius: 20%;
-}
-
 .linktree {
     animation: text-fade-in 2s ease-out;
     font-family: inherit;
@@ -584,4 +533,18 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.project {
+    animation: text-fade-in 3s ease-in;
+    margin-bottom: 35px;
+}
+
+.project h3 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.project p {
+    margin-top: 10px;
 }
