@@ -11,16 +11,14 @@
 </head>
 
 <body>
-    <section id="home"></section>
+    <section id="top"></section>
     <div class="top">
-    <nav class="navbar">
-        <ul class="nav-links">
-            <a class="nav-button" href="#home">Home</a>
-            <a class="nav-button" href="#about">About</a>
-            <a class="nav-button" href="#projects">Projects</a>
-            <a class="nav-button" href="#contact">Contact</a>
-        </ul>
-    </nav>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <a class="nav-button" href="index.html">Home</a>
+                <a class="nav-button" href="#top">Top</a>
+            </ul>
+        </nav>
     </div>
     <div class="section">
         <div class="photography">
@@ -42,95 +40,118 @@
         const photographyImages = document.querySelector('.photography-images');
         let currentIndex = 0;
 
-        const photoPattern = [2, 4, 3, 2, 3];
+        let photoPattern = [2, 4, 3, 2, 3];
         let patternIndex = 0;
 
-        while (currentIndex < photos.length) {
-            const row = document.createElement('div');
-            row.classList.add('photography-row');
-
-            const photosInRow = Math.min(
-                photos.length - currentIndex,
-                photoPattern[patternIndex]
-            );
-
-            for (let i = 0; i < photosInRow; i++) {
-                const img = document.createElement('img');
-                img.src = `photos/${photos[currentIndex]}`;
-                img.alt = `Photo ${currentIndex + 1}`;
-                row.appendChild(img);
-                currentIndex++;
+        function renderImages() {
+            if (window.innerWidth <= 700) {
+                photoPattern = [1, 1, 1, 1, 1];
+            } else {
+                photoPattern = [2, 4, 3, 2, 3];
             }
 
-            row.childNodes.forEach((img) => {
-                const isSingleImageRow = photosInRow === 1;
-                img.style.flex = isSingleImageRow
-                    ? `1 1 100%`
-                    : `1 1 calc(${100 / photosInRow}% - 20px)`;
-                img.style.maxWidth = isSingleImageRow
-                    ? `100%`
-                    : `calc(${100 / photosInRow}% - 20px)`;
-            });
+            photographyImages.innerHTML = '';
 
-            photographyImages.appendChild(row);
-            patternIndex = (patternIndex + 1) % photoPattern.length;
-        }
-        /* 
-        while (currentIndex < photos.length) {
-            const row = document.createElement('div');
-            row.classList.add('photography-row');
+            currentIndex = 0;
+            patternIndex = 0;
 
-            const photosInRow = Math.min(
-                photos.length - currentIndex,
-                photoPattern[patternIndex]
-            );
+            while (currentIndex < photos.length) {
+                const row = document.createElement('div');
+                row.classList.add('photography-row');
 
-            for (let i = 0; i < photosInRow; i++) {
-                const img = document.createElement('img');
-                img.src = `photos/${photos[currentIndex]}`;
-                img.alt = `Photo ${currentIndex + 1}`;
-                img.onclick = function() {
-                    window.open(`photos/${photos[currentIndex]}`, '_blank');
+                const photosInRow = Math.min(
+                    photos.length - currentIndex,
+                    photoPattern[patternIndex]
+                );
+
+                for (let i = 0; i < photosInRow; i++) {
+                    const img = document.createElement('img');
+                    img.src = `photos/${photos[currentIndex]}`;
+                    img.alt = `Photo ${currentIndex + 1}`;
+                    row.appendChild(img);
+                    currentIndex++;
                 }
-                row.appendChild(img);
-                currentIndex++;
+
+                row.childNodes.forEach((img) => {
+                    const isSingleImageRow = photosInRow === 1;
+                    img.style.flex = isSingleImageRow
+                        ? `1 1 100%`
+                        : `1 1 calc(${100 / photosInRow}% - 20px)`;
+                    img.style.maxWidth = isSingleImageRow
+                        ? `100%`
+                        : `calc(${100 / photosInRow}% - 20px)`;
+                });
+
+                photographyImages.appendChild(row);
+                patternIndex = (patternIndex + 1) % photoPattern.length;
             }
 
-            row.childNodes.forEach((img) => {
-                const isSingleImageRow = photosInRow === 1;
-                img.style.flex = isSingleImageRow
-                    ? `1 1 100%`
-                    : `1 1 calc(${100 / photosInRow}% - 20px)`;
-                img.style.maxWidth = isSingleImageRow
-                    ? `100%`
-                    : `calc(${100 / photosInRow}% - 20px)`;
-            });
+            /* while (currentIndex < photos.length) {
+                const row = document.createElement('div');
+                row.classList.add('photography-row');
 
-            photographyImages.appendChild(row);
-            patternIndex = (patternIndex + 1) % photoPattern.length;
+                const photosInRow = Math.min(
+                    photos.length - currentIndex,
+                    photoPattern[patternIndex]
+                );
+
+                for (let i = 0; i < photosInRow; i++) {
+                    const img = document.createElement('img');
+                    img.src = `photos/${photos[currentIndex]}`;
+                    img.alt = `Photo ${currentIndex + 1}`;
+                    img.onclick = function () {
+                        const a = document.createElement('a');
+                        a.href = `photos/${photos[currentIndex]}`;
+                        a.download = `photo${currentIndex + 1}.png`;
+                        a.click();
+                    };
+                    row.appendChild(img);
+                    currentIndex++;
+                }
+
+                row.childNodes.forEach((img) => {
+                    const isSingleImageRow = photosInRow === 1;
+                    img.style.flex = isSingleImageRow
+                        ? `1 1 100%`
+                        : `1 1 calc(${100 / photosInRow}% - 20px)`;
+                    img.style.maxWidth = isSingleImageRow
+                        ? `100%`
+                        : `calc(${100 / photosInRow}% - 20px)`;
+                });
+
+                photographyImages.appendChild(row);
+                patternIndex = (patternIndex + 1) % photoPattern.length;
+            } */
         }
-         */
+
+        renderImages();
+
+        window.addEventListener('resize', function () {
+            renderImages();
+        });
+
+
     </script>
-    
+
     <style>
         .photography-images-wrapper {
             width: 100%;
             margin: 0 auto;
             max-width: 1200px;
         }
-    
+
         .photography-images {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
-    
+
         .photography-row {
             display: flex;
             justify-content: space-between;
             gap: 20px;
         }
-    
+
         .photography-row img {
             height: auto;
             object-fit: contain;
@@ -139,20 +160,49 @@
             flex: 1 1 calc(33.33% - 20px);
             max-width: calc(33.33% - 20px);
         }
-    
+
         .photography-row img:first-child:last-child {
             flex: 1 1 100%;
             max-width: 100%;
         }
-    
+
         .photography-row img:nth-child(2):last-child {
             flex: 1 1 calc(50% - 10px);
             max-width: calc(50% - 10px);
         }
-    
+
         .photography-row img:hover {
             transform: scale(1.05);
             filter: brightness(1.2);
+        }
+
+        /* Media query for screens smaller than or equal to 500px */
+        @media screen and (max-width: 700px) {
+            .photography-row {
+                flex-direction: column;
+                /* Stack images vertically */
+            }
+
+            .photography-row img {
+                flex: 1 1 100%;
+                max-width: 100%;
+                /* Make images full width */
+            }
+
+            .photography-row img:first-child:last-child {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+
+            .photography-row img:nth-child(2):last-child {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+
+            .photography-row img:hover {
+                transform: none;
+                filter: none;
+            }
         }
     </style>
 </body>
