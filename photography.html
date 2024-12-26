@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icons/web_icon.png">
+    <link id="style" rel="stylesheet" href="style.css">
+    <title>Spencer Boggs</title>
+</head>
+
+<body>
+    <section id="home"></section>
+    <div class="top">
+    <nav class="navbar">
+        <ul class="nav-links">
+            <a class="nav-button" href="#home">Home</a>
+            <a class="nav-button" href="#about">About</a>
+            <a class="nav-button" href="#projects">Projects</a>
+            <a class="nav-button" href="#contact">Contact</a>
+        </ul>
+    </nav>
+    </div>
+    <div class="section">
+        <div class="photography">
+            <h2 class="section-title">Photography</h2>
+            <div class="photography-images-wrapper">
+                <div class="photography-images">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const image_count = 57;
+        const photos = [];
+        for (let i = 1; i <= image_count; i++) {
+            photos.push(`image${i}.png`);
+        }
+
+        const photographyImages = document.querySelector('.photography-images');
+        let currentIndex = 0;
+
+        const photoPattern = [2, 4, 3, 2, 3];
+        let patternIndex = 0;
+
+        while (currentIndex < photos.length) {
+            const row = document.createElement('div');
+            row.classList.add('photography-row');
+
+            const photosInRow = Math.min(
+                photos.length - currentIndex,
+                photoPattern[patternIndex]
+            );
+
+            for (let i = 0; i < photosInRow; i++) {
+                const img = document.createElement('img');
+                img.src = `photos/${photos[currentIndex]}`;
+                img.alt = `Photo ${currentIndex + 1}`;
+                row.appendChild(img);
+                currentIndex++;
+            }
+
+            row.childNodes.forEach((img) => {
+                const isSingleImageRow = photosInRow === 1;
+                img.style.flex = isSingleImageRow
+                    ? `1 1 100%`
+                    : `1 1 calc(${100 / photosInRow}% - 20px)`;
+                img.style.maxWidth = isSingleImageRow
+                    ? `100%`
+                    : `calc(${100 / photosInRow}% - 20px)`;
+            });
+
+            photographyImages.appendChild(row);
+            patternIndex = (patternIndex + 1) % photoPattern.length;
+        }
+        /* 
+        while (currentIndex < photos.length) {
+            const row = document.createElement('div');
+            row.classList.add('photography-row');
+
+            const photosInRow = Math.min(
+                photos.length - currentIndex,
+                photoPattern[patternIndex]
+            );
+
+            for (let i = 0; i < photosInRow; i++) {
+                const img = document.createElement('img');
+                img.src = `photos/${photos[currentIndex]}`;
+                img.alt = `Photo ${currentIndex + 1}`;
+                img.onclick = function() {
+                    window.open(`photos/${photos[currentIndex]}`, '_blank');
+                }
+                row.appendChild(img);
+                currentIndex++;
+            }
+
+            row.childNodes.forEach((img) => {
+                const isSingleImageRow = photosInRow === 1;
+                img.style.flex = isSingleImageRow
+                    ? `1 1 100%`
+                    : `1 1 calc(${100 / photosInRow}% - 20px)`;
+                img.style.maxWidth = isSingleImageRow
+                    ? `100%`
+                    : `calc(${100 / photosInRow}% - 20px)`;
+            });
+
+            photographyImages.appendChild(row);
+            patternIndex = (patternIndex + 1) % photoPattern.length;
+        }
+         */
+    </script>
+    
+    <style>
+        .photography-images-wrapper {
+            width: 100%;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+    
+        .photography-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    
+        .photography-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+    
+        .photography-row img {
+            height: auto;
+            object-fit: contain;
+            border-radius: 10px;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            flex: 1 1 calc(33.33% - 20px);
+            max-width: calc(33.33% - 20px);
+        }
+    
+        .photography-row img:first-child:last-child {
+            flex: 1 1 100%;
+            max-width: 100%;
+        }
+    
+        .photography-row img:nth-child(2):last-child {
+            flex: 1 1 calc(50% - 10px);
+            max-width: calc(50% - 10px);
+        }
+    
+        .photography-row img:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+    </style>
+</body>
+
+</html>
