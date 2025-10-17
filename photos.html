@@ -1,0 +1,598 @@
+<!--
+    Photo Gallery
+    Copyright (c) 2023 Spencer Boggs
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icons/web_icon.png">
+    <title>My Photos - Spencer Boggs</title>
+    <script src="photos-list.js"></script>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #000000;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            z-index: 100;
+            border-bottom: 2px solid #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .home-link {
+            color: #00d9ff;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: 2px solid #00d9ff;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        .home-link:hover {
+            background: #00d9ff;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4);
+            text-shadow: none;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #00d9ff;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.8), 0 0 20px rgba(0, 217, 255, 0.5);
+        }
+
+        /* Gallery Container */
+        .gallery-container {
+            margin-top: 100px;
+            padding: 40px 0;
+        }
+
+        /* Photo Row Styles */
+        .photo-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            will-change: transform;
+            animation: scroll-left 60s linear infinite;
+        }
+
+        .photo-row:nth-child(even) {
+            animation: scroll-right 60s linear infinite;
+        }
+
+        /* Scrolling Animations - Optimized for smoothness */
+        @keyframes scroll-left {
+            from {
+                transform: translate3d(0, 0, 0);
+            }
+            to {
+                transform: translate3d(-50%, 0, 0);
+            }
+        }
+
+        @keyframes scroll-right {
+            from {
+                transform: translate3d(-50%, 0, 0);
+            }
+            to {
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        /* Stop animation on hover */
+        .photo-row:hover {
+            animation-play-state: paused;
+        }
+
+        /* Photo Item Styles */
+        .photo-item {
+            flex-shrink: 0;
+            width: 350px;
+            height: 260px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        box-shadow 0.3s ease;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05) translateZ(0);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.6), 0 0 60px rgba(0, 217, 255, 0.3);
+            border-color: #00d9ff;
+            z-index: 10;
+        }
+
+        /* Image Styles */
+        .photo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+            transform: translateZ(0);
+        }
+
+        /* Blur placeholder */
+        .photo-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Loading state */
+        .photo-item.loading .photo-img {
+            opacity: 0;
+        }
+
+        .photo-item.loaded .photo-placeholder {
+            display: none;
+        }
+
+        .photo-item.loaded .photo-img {
+            opacity: 1;
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 70vw;
+            max-height: 70vh;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 0 40px rgba(0, 217, 255, 0.6), 0 0 80px rgba(0, 217, 255, 0.3);
+        }
+
+        .lightbox-close {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #00d9ff;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1001;
+            text-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
+        }
+
+        .lightbox-close:hover {
+            background: #00d9ff;
+            color: #000;
+            transform: rotate(90deg);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+            text-shadow: none;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 100px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .empty-state h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .empty-state p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        /* Mobile Styles - No Animation */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .header-title {
+                font-size: 20px;
+            }
+
+            .home-link {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            .gallery-container {
+                margin-top: 80px;
+                padding: 20px;
+            }
+
+            .photo-row {
+                animation: none !important;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .photo-item {
+                width: 100%;
+                max-width: 400px;
+                height: 250px;
+            }
+
+            .photo-item:hover {
+                transform: none;
+            }
+
+            .lightbox-content {
+                max-width: 90vw;
+                max-height: 90vh;
+            }
+
+            .lightbox-img {
+                max-height: 90vh;
+            }
+
+            .header {
+                padding: 10px 15px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 8px;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .home-link {
+                font-size: 11px;
+                padding: 6px 14px;
+                order: 2;
+            }
+
+            .header-title {
+                font-size: 22px;
+                text-align: center;
+                order: 1;
+                width: 100%;
+                margin: 0;
+            }
+
+            .header-content > div {
+                display: none;
+            }
+
+            .lightbox-close {
+                top: 20px;
+                left: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            .empty-state h2 {
+                font-size: 24px;
+            }
+
+            .empty-state p {
+                font-size: 16px;
+            }
+        }
+
+        /* Tablet Styles */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .photo-item {
+                width: 350px;
+                height: 260px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="home-link">← Back Home</a>
+            <h1 class="header-title">My Photos</h1>
+            <div style="width: 120px;"></div> <!-- Spacer for centering -->
+        </div>
+    </header>
+
+    <!-- Gallery Container -->
+    <div class="gallery-container" id="gallery">
+        <!-- Photos will be dynamically loaded here -->
+    </div>
+
+    <!-- Empty State (shown when no photos) -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <h2>📸 Photo Gallery Coming Soon</h2>
+        <p>This gallery will be filled with amazing photos. Check back soon!</p>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-close" id="lightboxClose">✕</div>
+        <div class="lightbox-content">
+            <img class="lightbox-img" id="lightboxImg" src="" alt="Full size photo">
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Photo Gallery Script
+         * Dynamically loads and displays photos in animated rows
+         */
+
+        // Configuration
+        const PHOTOS_PER_ROW = 8;
+        const PHOTO_FOLDER = 'photojpgs/';
+
+        /**
+         * Initialize the photo gallery
+         */
+        function initGallery() {
+            // Check if PHOTO_LIST is available
+            if (typeof PHOTO_LIST === 'undefined' || PHOTO_LIST.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            // Map photo files to full paths
+            const photoFiles = PHOTO_LIST.map(filename => PHOTO_FOLDER + filename);
+
+            // Create photo rows
+            createPhotoRows(photoFiles);
+        }
+
+        /**
+         * Create photo rows for the gallery
+         */
+        function createPhotoRows(photoFiles) {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+
+            // Check if mobile
+            const isMobile = window.innerWidth <= 768;
+
+            // Calculate number of rows needed
+            const numRows = Math.ceil(photoFiles.length / PHOTOS_PER_ROW);
+
+            for (let i = 0; i < numRows; i++) {
+                const row = document.createElement('div');
+                row.className = 'photo-row';
+
+                // Get photos for this row
+                const startIdx = i * PHOTOS_PER_ROW;
+                const endIdx = Math.min(startIdx + PHOTOS_PER_ROW, photoFiles.length);
+                const rowPhotos = photoFiles.slice(startIdx, endIdx);
+
+                // On desktop, duplicate photos for seamless infinite scroll
+                // On mobile, show each photo only once
+                const displayPhotos = isMobile ? rowPhotos : [...rowPhotos, ...rowPhotos];
+
+                displayPhotos.forEach((photoPath, idx) => {
+                    const photoItem = createPhotoItem(photoPath, startIdx + idx);
+                    row.appendChild(photoItem);
+                });
+
+                gallery.appendChild(row);
+            }
+        }
+
+        /**
+         * Create individual photo item with lazy loading
+         */
+        function createPhotoItem(photoPath, index) {
+            const item = document.createElement('div');
+            item.className = 'photo-item loading';
+            
+            // Create placeholder
+            const placeholder = document.createElement('div');
+            placeholder.className = 'photo-placeholder';
+            placeholder.textContent = 'Loading...';
+            
+            // Create image
+            const img = document.createElement('img');
+            img.className = 'photo-img';
+            img.alt = `Photo ${index + 1}`;
+            
+            // Lazy load image
+            img.onload = () => {
+                item.classList.remove('loading');
+                item.classList.add('loaded');
+            };
+            
+            img.onerror = () => {
+                placeholder.textContent = 'Image unavailable';
+            };
+            
+            // Use Intersection Observer for lazy loading with larger margin
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        img.src = photoPath;
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '200px'
+            });
+            
+            observer.observe(item);
+            
+            // Add click handler to open lightbox
+            item.addEventListener('click', () => {
+                openLightbox(photoPath);
+            });
+            
+            item.appendChild(placeholder);
+            item.appendChild(img);
+            
+            return item;
+        }
+
+        /**
+         * Open lightbox with selected photo
+         */
+        function openLightbox(photoPath) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            
+            lightboxImg.src = photoPath;
+            lightbox.classList.add('active');
+            
+            // Prevent body scrolling when lightbox is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        /**
+         * Close lightbox
+         */
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            
+            // Re-enable body scrolling
+            document.body.style.overflow = 'auto';
+        }
+
+        /**
+         * Show empty state when no photos are found
+         */
+        function showEmptyState() {
+            document.getElementById('gallery').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        // Initialize gallery on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initGallery();
+            
+            // Add lightbox event listeners
+            document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+            
+            // Close lightbox when clicking outside the image
+            document.getElementById('lightbox').addEventListener('click', (e) => {
+                if (e.target.id === 'lightbox') {
+                    closeLightbox();
+                }
+            });
+            
+            // Close lightbox with ESC key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
+
+            // Rebuild gallery on window resize (for orientation changes)
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    initGallery();
+                }, 250);
+            });
+        });
+    </script>
+</body>
+
+</html>
+
