@@ -1,16 +1,21 @@
+/**
+ * Main JavaScript for Spencer Boggs Portfolio
+ * Handles URL management and navigation
+ */
 
-if (window.innerWidth < 600) {
-    let style = document.getElementById("style").getAttribute("href");
-    style = style.substring(0, style.length - 9) + "phonestyle.css";
-    document.getElementById("style").setAttribute("href", style);
-}
-
+/**
+ * Window load event handler
+ * - Scrolls to top of page
+ * - Handles hash navigation after page load
+ * - Removes .html extension from URL for cleaner links
+ */
 window.onload = function () {
-
+    // Scroll to top after initial load
     setTimeout(function () {
         window.scrollTo(0, 0);
     }, 100);
 
+    // Re-apply hash navigation after animations complete
     setTimeout(function () {
         if (window.location.hash) {
             let hash = window.location.hash;
@@ -19,10 +24,9 @@ window.onload = function () {
         }
     }, 3000);
 
+    // Remove .html extension from URL (except for index.html)
     if (window.location.pathname.endsWith('.html') && !window.location.pathname.endsWith('index.html')) {
         var newUrl = window.location.pathname.replace('.html', '');
         window.history.replaceState(null, null, newUrl);
     }
-    
-    
 }
