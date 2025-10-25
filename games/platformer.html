@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platformer Game - Spencer Boggs</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+            font-family: 'Roboto Mono', monospace !important;
+            overflow: hidden !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+        }
+
+        .game-container {
+            width: 85vw !important;
+            height: 85vh !important;
+            max-width: 1200px !important;
+            max-height: 800px !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+        }
+
+        .game-title {
+            color: #00d9ff !important;
+            font-size: 2rem !important;
+            margin: 0 0 20px 0 !important;
+            text-shadow: 0 0 10px #00d9ff !important;
+            text-align: center !important;
+            z-index: 10 !important;
+        }
+
+        .game-canvas {
+            border: 4px solid #00d9ff !important;
+            border-radius: 15px !important;
+            box-shadow: 
+                0 0 30px rgba(0, 217, 255, 0.5),
+                inset 0 0 20px rgba(0, 217, 255, 0.1) !important;
+            background: #000 !important;
+            width: 100% !important;
+            height: 100% !important;
+            image-rendering: pixelated !important;
+            image-rendering: -moz-crisp-edges !important;
+            image-rendering: crisp-edges !important;
+            display: block !important;
+            margin: 0 auto !important;
+        }
+
+        /* CRT Effect */
+        .game-canvas::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 50%, rgba(0, 217, 255, 0.03) 50%),
+                linear-gradient(0deg, transparent 50%, rgba(0, 217, 255, 0.03) 50%);
+            background-size: 2px 2px;
+            pointer-events: none;
+            border-radius: 15px;
+        }
+
+        .game-controls {
+            color: #00d9ff !important;
+            text-align: center !important;
+            font-size: 1.1rem !important;
+            z-index: 10 !important;
+            margin-top: 20px !important;
+        }
+
+        .controls-info {
+            margin-top: 10px !important;
+            font-size: 0.9rem !important;
+            opacity: 0.8 !important;
+        }
+
+        .back-button {
+            position: fixed !important;
+            top: 20px !important;
+            left: 20px !important;
+            background: rgba(0, 217, 255, 0.1) !important;
+            border: 2px solid #00d9ff !important;
+            color: #00d9ff !important;
+            padding: 10px 20px !important;
+            border-radius: 5px !important;
+            text-decoration: none !important;
+            font-family: 'Roboto Mono', monospace !important;
+            transition: all 0.3s ease !important;
+            z-index: 100 !important;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 217, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .game-canvas {
+                width: 100vw;
+                height: 100vh;
+            }
+            
+            .back-button {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-button">← Back to Portfolio</a>
+    
+    <div class="game-container">
+        <h1 class="game-title">Platformer Game</h1>
+        
+        <canvas id="gameCanvas" class="game-canvas"></canvas>
+        
+        <div class="game-controls">
+            <div>Use <strong>WASD</strong> or <strong>Arrow Keys</strong> to move</div>
+            <div class="controls-info">W/↑ = Jump | A/← = Left | D/→ = Right | Shift = Sprint</div>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+
+        // Initial resize
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Game state
+        const game = {
+            width: canvas.width,
+            height: canvas.height,
+            gravity: 0.8,
+            friction: 0.8,
+            worldWidth: 3000, // Much larger world
+            worldHeight: 2000
+        };
+
+        // Camera system
+        const camera = {
+            x: 0,
+            y: 0,
+            targetX: 0,
+            targetY: 0,
+            smoothing: 0.1
+        };
+
+        // Initialize camera to center on player
+        function initCamera() {
+            camera.x = player.x - game.width / 2;
+            camera.y = player.y - game.height / 2;
+            camera.targetX = camera.x;
+            camera.targetY = camera.y;
+        }
+
+        // Player object
+        const player = {
+            x: 100,
+            y: game.worldHeight - 200, // Start on ground
+            width: 20,
+            height: 20,
+            velocityX: 0,
+            velocityY: 0,
+            speed: 3,
+            sprintSpeed: 6,
+            jumpPower: 12,
+            onGround: false,
+            canJump: true,
+            jumpCooldown: 0,
+            color: '#00d9ff'
+        };
+
+        // Platforms array - much larger and more dynamic level
+        let platforms = [];
+
+        function generatePlatforms() {
+            platforms = [
+                // Ground platform spanning the world
+                { x: 0, y: game.worldHeight - 100, width: game.worldWidth, height: 100, color: '#00d9ff' },
+                
+                // First section - easy platforms
+                { x: 200, y: game.worldHeight - 200, width: 100, height: 20, color: '#00d9ff' },
+                { x: 400, y: game.worldHeight - 300, width: 100, height: 20, color: '#00d9ff' },
+                { x: 600, y: game.worldHeight - 400, width: 100, height: 20, color: '#00d9ff' },
+                
+                // Second section - medium difficulty
+                { x: 800, y: game.worldHeight - 250, width: 80, height: 20, color: '#00d9ff' },
+                { x: 1000, y: game.worldHeight - 350, width: 80, height: 20, color: '#00d9ff' },
+                { x: 1200, y: game.worldHeight - 450, width: 80, height: 20, color: '#00d9ff' },
+                { x: 1400, y: game.worldHeight - 300, width: 80, height: 20, color: '#00d9ff' },
+                
+                // Third section - hard difficulty
+                { x: 1600, y: game.worldHeight - 200, width: 60, height: 20, color: '#00d9ff' },
+                { x: 1800, y: game.worldHeight - 350, width: 60, height: 20, color: '#00d9ff' },
+                { x: 2000, y: game.worldHeight - 500, width: 60, height: 20, color: '#00d9ff' },
+                { x: 2200, y: game.worldHeight - 300, width: 60, height: 20, color: '#00d9ff' },
+                { x: 2400, y: game.worldHeight - 150, width: 60, height: 20, color: '#00d9ff' },
+                
+                // Final section - very hard
+                { x: 2600, y: game.worldHeight - 400, width: 40, height: 20, color: '#00d9ff' },
+                { x: 2700, y: game.worldHeight - 600, width: 40, height: 20, color: '#00d9ff' },
+                { x: 2800, y: game.worldHeight - 200, width: 40, height: 20, color: '#00d9ff' }
+            ];
+        }
+
+        // Initial platform generation
+        generatePlatforms();
+        
+        // Initialize camera after platforms are generated
+        initCamera();
+
+        // Input handling
+        const keys = {};
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key === 'Shift') keys['shift'] = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+            if (e.key === 'Shift') keys['shift'] = false;
+        });
+
+        // Collision detection
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        // Update camera to follow player
+        function updateCamera() {
+            // Target camera position (centered on player)
+            camera.targetX = player.x - game.width / 2;
+            camera.targetY = player.y - game.height / 2;
+            
+            // Smooth camera movement
+            camera.x += (camera.targetX - camera.x) * camera.smoothing;
+            camera.y += (camera.targetY - camera.y) * camera.smoothing;
+            
+            // Keep camera within world bounds
+            camera.x = Math.max(0, Math.min(camera.x, game.worldWidth - game.width));
+            camera.y = Math.max(0, Math.min(camera.y, game.worldHeight - game.height));
+        }
+
+        // Player movement
+        function updatePlayer() {
+            // Update jump cooldown
+            if (player.jumpCooldown > 0) {
+                player.jumpCooldown--;
+            }
+            
+            // Determine current speed
+            const currentSpeed = keys['shift'] ? player.sprintSpeed : player.speed;
+            
+            // Horizontal movement
+            if (keys['a'] || keys['arrowleft']) {
+                player.velocityX = -currentSpeed;
+            } else if (keys['d'] || keys['arrowright']) {
+                player.velocityX = currentSpeed;
+            } else {
+                player.velocityX *= game.friction;
+            }
+
+            // Jumping with cooldown
+            if ((keys['w'] || keys['arrowup']) && player.onGround && player.canJump && player.jumpCooldown === 0) {
+                player.velocityY = -player.jumpPower;
+                player.onGround = false;
+                player.canJump = false;
+                player.jumpCooldown = 30; // 0.5 seconds at 60fps
+            }
+
+            // Apply gravity
+            player.velocityY += game.gravity;
+
+            // Update position
+            player.x += player.velocityX;
+            player.y += player.velocityY;
+
+            // Check platform collisions
+            player.onGround = false;
+            for (let platform of platforms) {
+                if (checkCollision(player, platform)) {
+                    // Calculate overlap amounts
+                    const overlapLeft = (player.x + player.width) - platform.x;
+                    const overlapRight = (platform.x + platform.width) - player.x;
+                    const overlapTop = (player.y + player.height) - platform.y;
+                    const overlapBottom = (platform.y + platform.height) - player.y;
+                    
+                    // Find the smallest overlap to determine collision direction
+                    const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
+                    
+                    if (minOverlap === overlapTop && player.velocityY > 0) {
+                        // Landing on top of platform
+                        player.y = platform.y - player.height;
+                        player.velocityY = 0;
+                        player.onGround = true;
+                        player.canJump = true;
+                    }
+                    else if (minOverlap === overlapBottom && player.velocityY < 0) {
+                        // Hitting platform from below
+                        player.y = platform.y + platform.height;
+                        player.velocityY = 0;
+                    }
+                    else if (minOverlap === overlapLeft && player.velocityX > 0) {
+                        // Hitting platform from the left
+                        player.x = platform.x - player.width;
+                        player.velocityX = 0;
+                    }
+                    else if (minOverlap === overlapRight && player.velocityX < 0) {
+                        // Hitting platform from the right
+                        player.x = platform.x + platform.width;
+                        player.velocityX = 0;
+                    }
+                }
+            }
+
+            // Keep player in world bounds
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > game.worldWidth) player.x = game.worldWidth - player.width;
+            if (player.y > game.worldHeight) {
+                // Reset player if they fall off
+                player.x = 100;
+                player.y = game.worldHeight - 200;
+                player.velocityX = 0;
+                player.velocityY = 0;
+                // Reset camera to player position
+                initCamera();
+            }
+        }
+
+        // Render function with camera
+        function render() {
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, game.width, game.height);
+
+            // Save context for camera transform
+            ctx.save();
+            ctx.translate(-camera.x, -camera.y);
+
+            // Draw platforms
+            platforms.forEach(platform => {
+                ctx.fillStyle = platform.color;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                
+                // Add glow effect
+                ctx.shadowColor = platform.color;
+                ctx.shadowBlur = 8;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                ctx.shadowBlur = 0;
+            });
+
+            // Draw player
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            
+            // Add glow effect to player
+            ctx.shadowColor = player.color;
+            ctx.shadowBlur = 12;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.shadowBlur = 0;
+
+            // Restore context
+            ctx.restore();
+        }
+
+        // Game loop
+        function gameLoop() {
+            // Update game dimensions
+            game.width = canvas.width;
+            game.height = canvas.height;
+            
+            updatePlayer();
+            updateCamera();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game
+        gameLoop();
+    </script>
+</body>
+</html>

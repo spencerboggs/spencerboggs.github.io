@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tron Runner - Spencer Boggs</title>
+    <style>
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #000 !important;
+            font-family: 'Roboto Mono', monospace !important;
+            overflow: hidden !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+        }
+
+        .game-container {
+            width: 85vw !important;
+            height: 85vh !important;
+            max-width: 1200px !important;
+            max-height: 800px !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+        }
+
+        .game-title {
+            color: #00d9ff !important;
+            font-size: 2rem !important;
+            margin: 0 0 20px 0 !important;
+            text-shadow: 0 0 10px #00d9ff !important;
+            text-align: center !important;
+            z-index: 10 !important;
+        }
+
+        .game-canvas {
+            border: 4px solid #00d9ff !important;
+            border-radius: 15px !important;
+            box-shadow: 
+                0 0 30px rgba(0, 217, 255, 0.5),
+                inset 0 0 20px rgba(0, 217, 255, 0.1) !important;
+            background: #000 !important;
+            width: 100% !important;
+            height: 100% !important;
+            image-rendering: pixelated !important;
+            image-rendering: -moz-crisp-edges !important;
+            image-rendering: crisp-edges !important;
+            display: block !important;
+            margin: 0 auto !important;
+        }
+
+        .game-controls {
+            color: #00d9ff !important;
+            text-align: center !important;
+            font-size: 1.1rem !important;
+            z-index: 10 !important;
+            margin-top: 20px !important;
+        }
+
+        .controls-info {
+            margin-top: 10px !important;
+            font-size: 0.9rem !important;
+            opacity: 0.8 !important;
+        }
+
+        .back-button {
+            position: fixed !important;
+            top: 20px !important;
+            left: 20px !important;
+            background: rgba(0, 217, 255, 0.1) !important;
+            border: 2px solid #00d9ff !important;
+            color: #00d9ff !important;
+            padding: 10px 20px !important;
+            border-radius: 5px !important;
+            text-decoration: none !important;
+            font-family: 'Roboto Mono', monospace !important;
+            transition: all 0.3s ease !important;
+            z-index: 100 !important;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 217, 255, 0.2) !important;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3) !important;
+        }
+
+        .end-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .end-screen h1 {
+            color: #00d9ff;
+            font-size: 3rem;
+            margin: 0 0 20px 0;
+            text-shadow: 0 0 20px #00d9ff;
+        }
+
+        .end-screen p {
+            color: #00d9ff;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        .end-screen button {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            color: #00d9ff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .end-screen button:hover {
+            background: rgba(0, 217, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 1.5rem !important;
+            }
+            
+            .game-canvas {
+                width: 100vw !important;
+                height: 100vh !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-button">← Back to Portfolio</a>
+    
+    <div class="game-container">
+        <h1 class="game-title">Tron Runner</h1>
+        
+        <canvas id="gameCanvas" class="game-canvas"></canvas>
+        
+        <div class="game-controls">
+            <div>Use <strong>W/S</strong> or <strong>↑/↓</strong> to move up and down</div>
+            <div class="controls-info">Bike is centered horizontally - avoid obstacles and your own trail!</div>
+        </div>
+
+        <div class="end-screen" id="endScreen">
+            <h1>CONGRATULATIONS!</h1>
+            <p>You have completed the Tron Runner!</p>
+            <p>Made by Spencer Boggs</p>
+            <button onclick="location.href='../index.html'">Return to Portfolio</button>
+        </div>
+    </div>
+
+    <script src="tron-map.js"></script>
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+
+        // Initial resize
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Game state
+        const game = {
+            width: canvas.width,
+            height: canvas.height,
+            scrollSpeed: 4,
+            gameSpeed: 1,
+            distance: 0,
+            maxDistance: 5000, // Game ends at 5000 units
+            gameOver: false,
+            won: false
+        };
+
+        // Player bike object (centered on X-axis, free to move Y)
+        const player = {
+            x: canvas.width / 2 - 6, // Fixed X position (centered)
+            y: canvas.height / 2 - 6, // Can move up/down
+            width: 12,
+            height: 12,
+            speed: 3,
+            color: '#00d9ff',
+            direction: 0, // 0=up, 1=right, 2=down, 3=left
+            trail: []
+        };
+
+        // Load map data
+        const levelObstacles = tronMap.map(obstacle => ({
+            x: obstacle[0],
+            y: obstacle[1],
+            width: obstacle[2],
+            height: obstacle[3],
+            type: obstacle[4],
+            color: obstacle[5]
+        }));
+
+        // Active obstacles array
+        let obstacles = [];
+
+        // Input handling
+        const keys = {};
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        // Add obstacles based on distance (horizontal scrolling)
+        function addObstacles() {
+            levelObstacles.forEach(obstacle => {
+                // Check if obstacle should be spawned (coming from right side)
+                if (obstacle.x - game.distance < canvas.width + 100 && 
+                    obstacle.x - game.distance > -100 && 
+                    !obstacles.some(o => o.originalX === obstacle.x)) {
+                    obstacles.push({
+                        ...obstacle,
+                        x: obstacle.x - game.distance,
+                        originalX: obstacle.x
+                    });
+                }
+            });
+        }
+
+        // Collision detection
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        // Update player movement (Tron bike - centered X, free Y movement)
+        function updatePlayer() {
+            // Add current position to trail
+            player.trail.push({x: player.x, y: player.y});
+            
+            // Limit trail length for performance (longer trail)
+            if (player.trail.length > 200) {
+                player.trail.shift();
+            }
+            
+            // Handle direction changes (only up/down movement)
+            if (keys['w'] || keys['arrowup']) {
+                if (player.direction !== 2) player.direction = 0; // Up
+            }
+            if (keys['s'] || keys['arrowdown']) {
+                if (player.direction !== 0) player.direction = 2; // Down
+            }
+            
+            // Move player up/down only
+            switch(player.direction) {
+                case 0: // Up
+                    player.y -= player.speed;
+                    break;
+                case 2: // Down
+                    player.y += player.speed;
+                    break;
+            }
+            
+            // Keep player in bounds (Y-axis only)
+            player.y = Math.max(0, Math.min(player.y, canvas.height - player.height));
+            
+            // Move all obstacles left (horizontal scrolling)
+            obstacles.forEach(obstacle => obstacle.x -= game.scrollSpeed);
+            
+            // Update distance based on scrolling
+            game.distance += game.scrollSpeed;
+        }
+
+        // Update obstacles
+        function updateObstacles() {
+            // Add obstacles based on distance
+            addObstacles();
+
+            // Remove obstacles that are off screen (left side)
+            obstacles.forEach((obstacle, index) => {
+                if (obstacle.x + obstacle.width < 0) {
+                    obstacles.splice(index, 1);
+                }
+            });
+            
+            // Check if all obstacles have passed (win condition)
+            if (obstacles.length === 0 && game.distance > 12000) {
+                game.won = true;
+                document.getElementById('endScreen').style.display = 'flex';
+            }
+        }
+
+        // Check collisions
+        function checkCollisions() {
+            // Check collision with obstacles
+            for (let obstacle of obstacles) {
+                if (checkCollision(player, obstacle)) {
+                    game.gameOver = true;
+                    return;
+                }
+            }
+            
+            // Check collision with own trail
+            for (let i = 0; i < player.trail.length - 10; i++) { // Skip recent trail points
+                const trailPoint = player.trail[i];
+                if (checkCollision(player, {x: trailPoint.x, y: trailPoint.y, width: 4, height: 4})) {
+                    game.gameOver = true;
+                    return;
+                }
+            }
+        }
+
+        // Render function (optimized)
+        function render() {
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, game.width, game.height);
+
+            // Draw grid background (optimized)
+            ctx.strokeStyle = '#001133';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let x = 0; x < game.width; x += 40) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, game.height);
+            }
+            for (let y = 0; y < game.height; y += 40) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(game.width, y);
+            }
+            ctx.stroke();
+
+            // Draw player trail (Tron light trail)
+            if (player.trail.length > 1) {
+                ctx.strokeStyle = player.color;
+                ctx.lineWidth = 3;
+                ctx.shadowColor = player.color;
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.moveTo(player.trail[0].x + 4, player.trail[0].y + 4);
+                for (let i = 1; i < player.trail.length; i++) {
+                    ctx.lineTo(player.trail[i].x + 4, player.trail[i].y + 4);
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            // Draw obstacles (optimized with sharp corners)
+            ctx.shadowBlur = 8;
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.color;
+                ctx.shadowColor = obstacle.color;
+                // Draw with sharp corners (no rounded corners)
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+            ctx.shadowBlur = 0;
+
+            // Draw player bike
+            ctx.fillStyle = player.color;
+            ctx.shadowColor = player.color;
+            ctx.shadowBlur = 12;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.shadowBlur = 0;
+
+            // Draw distance counter
+            ctx.fillStyle = '#00d9ff';
+            ctx.font = '20px Roboto Mono';
+            ctx.fillText(`Distance: ${Math.floor(game.distance)}`, 20, 30);
+            ctx.fillText(`Progress: ${Math.floor((game.distance / game.maxDistance) * 100)}%`, 20, 60);
+        }
+
+        // Game loop
+        function gameLoop() {
+            if (!game.gameOver && !game.won) {
+                // Update game dimensions
+                game.width = canvas.width;
+                game.height = canvas.height;
+                
+                updatePlayer();
+                updateObstacles();
+                checkCollisions();
+                
+                // Update distance
+                game.distance += game.scrollSpeed * game.gameSpeed;
+                
+                // Check if player won
+                if (game.distance >= game.maxDistance) {
+                    game.won = true;
+                    document.getElementById('endScreen').style.display = 'flex';
+                }
+                
+                render();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game
+        gameLoop();
+    </script>
+</body>
+</html>

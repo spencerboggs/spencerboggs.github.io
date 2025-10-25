@@ -8,8 +8,33 @@
  * - Scrolls to top of page
  * - Handles hash navigation after page load
  * - Removes .html extension from URL for cleaner links
+ * - Initializes dropdown functionality
  */
 window.onload = function () {
+    // Initialize dropdown functionality
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        const content = dropdown.querySelector('.dropdown-content');
+        
+        if (toggle && content) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Toggle active class for better mobile support
+                dropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        }
+    });
+    
     // Scroll to top after initial load
     setTimeout(function () {
         window.scrollTo(0, 0);

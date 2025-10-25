@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify OAuth Proxy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .success {
+            color: #1db954;
+        }
+        .error {
+            color: #ff2d75;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spotify Authentication</h1>
+        <div id="status">Processing authentication...</div>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // This is a simple proxy page that handles the OAuth callback
+        // In a real implementation, you'd need a proper backend server
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const error = urlParams.get('error');
+        const state = urlParams.get('state');
+        
+        if (error) {
+            document.getElementById('status').innerHTML = '<span class="error">Authentication failed</span>';
+            document.getElementById('message').textContent = 'Please try again.';
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+        } else if (code) {
+            document.getElementById('status').innerHTML = '<span class="success">Authentication successful!</span>';
+            document.getElementById('message').textContent = 'Redirecting back to the main app...';
+            
+            // In a real app, you'd exchange the code for a token here
+            // For now, we'll just redirect back with a success message
+            setTimeout(() => {
+                window.opener.postMessage({
+                    type: 'SPOTIFY_AUTH_SUCCESS',
+                    code: code
+                }, '*');
+                window.close();
+            }, 2000);
+        } else {
+            document.getElementById('status').innerHTML = '<span class="error">Invalid request</span>';
+            document.getElementById('message').textContent = 'No authorization code received.';
+        }
+    </script>
+</body>
+</html>

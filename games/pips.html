@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pips - Logic Puzzle</title>
+    <style>
+        @font-face {
+            font-family: 'Roboto Mono';
+            src: url('../fonts/RobotoMono-VariableFont_wght.ttf');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #000000;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            color: #00d9ff;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.5);
+        }
+
+        .subtitle {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .controls input {
+            padding: 10px 15px;
+            border: 2px solid #00d9ff;
+            background-color: rgba(0, 217, 255, 0.05);
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            width: 200px;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        .controls input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .controls input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            background-color: rgba(0, 217, 255, 0.1);
+            color: #00d9ff;
+            border: 2px solid #00d9ff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        .controls button:hover {
+            background-color: #00d9ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .grid-container {
+            background: rgba(0, 217, 255, 0.02);
+            padding: 25px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            position: relative;
+        }
+
+        .grid {
+            display: inline-grid;
+            gap: 3px;
+            background-color: rgba(0, 217, 255, 0.2);
+            padding: 3px;
+            position: relative;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.85;
+        }
+
+        .cell.invisible {
+            background: transparent;
+            border: none;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .cell:hover {
+            border-color: #00d9ff;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        .cell.drop-target {
+            background-color: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+        }
+
+        .cell .rule-label {
+            position: absolute;
+            top: -14px;
+            left: -14px;
+            font-size: 13px;
+            color: #0ff;
+            font-weight: 700;
+            background: #000000;
+            padding: 5px 7px;
+            border-radius: 6px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 0 12px rgba(0, 217, 255, 0.8), 0 0 4px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            min-width: 30px;
+            width: 30px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
+            pointer-events: none;
+        }
+
+        .placed-domino-overlay {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.25), rgba(0, 217, 255, 0.1));
+            border: 3px solid #00d9ff;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.8), inset 0 0 10px rgba(0, 217, 255, 0.2);
+            pointer-events: none;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .placed-domino-overlay.vertical {
+            flex-direction: column;
+        }
+
+        .placed-domino-overlay.horizontal {
+            flex-direction: row;
+        }
+
+        .placed-domino-overlay .domino-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            position: relative;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .placed-domino-overlay .domino-section .pips {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            width: 38px;
+            height: 38px;
+        }
+
+        .placed-domino-overlay .domino-section .pip {
+            width: 9px;
+            height: 9px;
+            background-color: #0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 1), 0 0 12px rgba(0, 217, 255, 0.8);
+        }
+
+        .placed-domino-overlay .domino-divider {
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 217, 255, 0.8);
+            box-shadow: 0 0 5px rgba(0, 217, 255, 0.6);
+        }
+
+        .placed-domino-overlay.horizontal .domino-divider {
+            width: 3px;
+            height: 100%;
+        }
+
+        .cell .domino-placed {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cell .pips {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .cell .pip {
+            width: 7px;
+            height: 7px;
+            background-color: #00d9ff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(0, 217, 255, 0.9);
+        }
+
+        .cell.preview-highlight {
+            background-color: rgba(0, 217, 255, 0.3) !important;
+            border: 2px dashed #00d9ff !important;
+        }
+
+        .domino-number {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #0ff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1px 3px;
+            border-radius: 2px;
+            line-height: 1;
+        }
+
+        .domino-half .pips {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            width: 24px;
+            height: 24px;
+        }
+
+        .domino-half .pip {
+            width: 5px;
+            height: 5px;
+            background-color: #00d9ff;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 217, 255, 0.8);
+        }
+
+        .dominoes-container {
+            background: rgba(0, 217, 255, 0.02);
+            padding: 15px 25px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .dominoes-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #00d9ff;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .dominoes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 8px;
+        }
+
+        .domino {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #00d9ff;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
+            padding: 4px;
+            cursor: grab;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .domino::before {
+            content: '↻';
+            position: absolute;
+            top: 1px;
+            right: 2px;
+            font-size: 10px;
+            color: rgba(0, 217, 255, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .domino:hover::before {
+            opacity: 1;
+        }
+        
+        .domino::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            opacity: 0.3;
+        }
+        
+        .domino.vertical:not(.used)::after {
+            border-width: 0 4px 6px 4px;
+            border-color: transparent transparent #00d9ff transparent;
+        }
+        
+        .domino.horizontal:not(.used)::after {
+            border-width: 4px 0 4px 6px;
+            border-color: transparent transparent transparent #00d9ff;
+        }
+
+        .domino:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+            border-color: #0ff;
+        }
+
+        .domino.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .domino.used {
+            opacity: 0.2;
+            pointer-events: none;
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+
+        .domino.horizontal {
+            flex-direction: row;
+            grid-column: span 2;
+        }
+
+        .domino.vertical {
+            flex-direction: column;
+        }
+
+        .domino-half {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 2px;
+            flex: 1;
+        }
+
+        .domino.vertical .domino-half {
+            min-height: 30px;
+            width: 100%;
+        }
+
+        .domino.horizontal .domino-half {
+            min-width: 30px;
+            height: 100%;
+        }
+
+        .message {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid;
+            font-weight: 600;
+            display: none;
+            font-family: 'Roboto Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .message.success {
+            background-color: rgba(0, 217, 255, 0.1);
+            color: #00d9ff;
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+            display: block;
+        }
+
+        .message.error {
+            background-color: rgba(255, 0, 100, 0.1);
+            color: #ff0064;
+            border-color: #ff0064;
+            box-shadow: 0 0 20px rgba(255, 0, 100, 0.3);
+            display: block;
+        }
+
+        .instructions {
+            background: rgba(0, 217, 255, 0.02);
+            padding: 25px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            max-width: 700px;
+            margin-top: 30px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: #00d9ff;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            line-height: 2;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .instructions strong {
+            color: #00d9ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PIPS</h1>
+        <div class="subtitle">Place dominoes to satisfy all region rules</div>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="seedInput" placeholder="Enter seed (or leave blank for daily)">
+        <button id="generateBtn">Generate Puzzle</button>
+        <button id="clearBtn">Clear Board</button>
+        <button id="checkBtn">Check Solution</button>
+        <button id="solveBtn">Show Solution</button>
+    </div>
+
+    <div class="game-container">
+        <div class="grid-container">
+            <div id="grid" class="grid"></div>
+        </div>
+        <div class="dominoes-container" id="dominoesContainer">
+            <div class="dominoes-title">Available Dominoes</div>
+            <div id="dominosList" class="dominoes-list"></div>
+        </div>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <div class="instructions">
+        <h3>How to Play</h3>
+        <ul>
+            <li>Drag dominoes from the panel below onto the grid</li>
+            <li>Click a domino to rotate it before or after placing</li>
+            <li>Each colored region has a rule that must be satisfied</li>
+            <li>Rules: <strong>X</strong> (sum equals X), <strong>≠</strong> (all different), <strong>≡</strong> (all equal), <strong>>X</strong> (all greater than X), <strong><X</strong> (all less than X)</li>
+            <li>Domino values range from 0 to 6 (shown as pips)</li>
+            <li>Cover all cells with dominoes without overlapping</li>
+            <li>Drag placed dominoes back to remove them</li>
+            <li>The puzzle auto-checks when complete</li>
+        </ul>
+    </div>
+
+    <script>
+        // Seeded random number generator
+        class SeededRandom {
+            constructor(seed) {
+                this.seed = seed;
+            }
+            
+            next() {
+                this.seed = (this.seed * 9301 + 49297) % 233280;
+                return this.seed / 233280;
+            }
+            
+            nextInt(min, max) {
+                return Math.floor(this.next() * (max - min + 1)) + min;
+            }
+            
+            shuffle(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(this.next() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+        }
+
+        // Game state
+        let grid = [];
+        let regions = [];
+        let dominoes = [];
+        let currentSeed = 0;
+        let draggedDomino = null;
+        let placedDominoes = [];
+
+        // Generate daily seed
+        function getDailySeed() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
+            return year * 10000 + month * 100 + day;
+        }
+
+        // Generate region colors - more vibrant and distinct
+        const regionColors = [
+            '#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3',
+            '#F38181', '#AA96DA', '#FCBAD3', '#A8E6CF',
+            '#FF8B94', '#C7CEEA', '#FFD3B6', '#DCEDC1',
+            '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE',
+            '#85C1E2', '#F8B195', '#C06C84', '#6C5B7B'
+        ];
+        
+        const noRuleColor = 'rgba(30, 30, 30, 0.8)'; // Off-black for cells with no rules
+
+        // Create pips display
+        function createPips(value) {
+            const pipsDiv = document.createElement('div');
+            pipsDiv.className = 'pips';
+            
+            const positions = [
+                [],
+                [[1,1]],
+                [[0,0], [2,2]],
+                [[0,0], [1,1], [2,2]],
+                [[0,0], [0,2], [2,0], [2,2]],
+                [[0,0], [0,2], [1,1], [2,0], [2,2]],
+                [[0,0], [0,2], [1,0], [1,2], [2,0], [2,2]]
+            ];
+
+            if (value > 0 && value <= 6) {
+                const pipPositions = positions[value];
+                const grid = Array(9).fill(false);
+                
+                pipPositions.forEach(([row, col]) => {
+                    grid[row * 3 + col] = true;
+                });
+
+                grid.forEach((hasPip, index) => {
+                    const cell = document.createElement('div');
+                    if (hasPip) {
+                        cell.className = 'pip';
+                    }
+                    pipsDiv.appendChild(cell);
+                });
+            } else if (value === 0) {
+                pipsDiv.textContent = '';
+            }
+
+            return pipsDiv;
+        }
+
+        // Game state - support irregular grids
+        let gridRows = 6;
+        let gridCols = 6;
+        let playableCells = new Set();
+
+        // Generate puzzle
+        function generatePuzzle(seed) {
+            const rng = new SeededRandom(seed);
+            currentSeed = seed;
+            
+            // Generate grid dimensions - more variety for irregular shapes
+            const sizeOption = rng.nextInt(0, 7);
+            switch(sizeOption) {
+                case 0: gridRows = 5; gridCols = 8; break;
+                case 1: gridRows = 8; gridCols = 5; break;
+                case 2: gridRows = 6; gridCols = 7; break;
+                case 3: gridRows = 7; gridCols = 6; break;
+                case 4: gridRows = 5; gridCols = 7; break;
+                case 5: gridRows = 7; gridCols = 5; break;
+                case 6: gridRows = 6; gridCols = 8; break;
+                default: gridRows = 6; gridCols = 7; break;
+            }
+
+            // Initialize grid
+            grid = Array(gridRows).fill(null).map(() => Array(gridCols).fill(null));
+            
+            // Create irregular playable area
+            playableCells = new Set();
+            const centerRow = Math.floor(gridRows / 2);
+            const centerCol = Math.floor(gridCols / 2);
+            
+            // Start with center and grow outward with more irregular pattern
+            const queue = [[centerRow, centerCol]];
+            const visited = new Set();
+            visited.add(`${centerRow},${centerCol}`);
+            playableCells.add(`${centerRow},${centerCol}`);
+            
+            // Determine target playable cells (even number, more irregular)
+            const targetCells = Math.floor((gridRows * gridCols * (0.5 + rng.next() * 0.3)) / 2) * 2;
+            
+            while (playableCells.size < targetCells && queue.length > 0) {
+                const [row, col] = queue.shift();
+                
+                const neighbors = [
+                    [row - 1, col], [row + 1, col],
+                    [row, col - 1], [row, col + 1]
+                ];
+                
+                const shuffled = rng.shuffle(neighbors);
+                
+                for (const [nRow, nCol] of shuffled) {
+                    const key = `${nRow},${nCol}`;
+                    if (nRow >= 0 && nRow < gridRows && 
+                        nCol >= 0 && nCol < gridCols && 
+                        !visited.has(key)) {
+                        
+                        visited.add(key);
+                        
+                        // More aggressive randomization for irregular shapes
+                        const includeChance = playableCells.size < targetCells * 0.3 ? 0.95 : 
+                                            playableCells.size < targetCells * 0.6 ? 0.7 : 
+                                            0.4;
+                        
+                        if (rng.next() < includeChance) {
+                            playableCells.add(key);
+                            queue.push([nRow, nCol]);
+                        }
+                    }
+                }
+            }
+            
+            // Make shape more irregular by removing pairs of adjacent cells
+            const cellsArray = Array.from(playableCells);
+            const pairsToRemove = Math.floor(cellsArray.length * (0.02 + rng.next() * 0.05));
+            
+            for (let i = 0; i < pairsToRemove; i++) {
+                // Find edge cells
+                const edgeCells = cellsArray.filter(key => {
+                    const [r, c] = key.split(',').map(Number);
+                    const neighbors = [
+                        `${r-1},${c}`, `${r+1},${c}`,
+                        `${r},${c-1}`, `${r},${c+1}`
+                    ];
+                    return neighbors.some(n => !playableCells.has(n));
+                });
+                
+                if (edgeCells.length > 0) {
+                    // Pick a random edge cell
+                    const cell1 = edgeCells[Math.floor(rng.next() * edgeCells.length)];
+                    const [r1, c1] = cell1.split(',').map(Number);
+                    
+                    // Find an adjacent playable cell to remove as a pair
+                    const adjacentCells = [
+                        `${r1-1},${c1}`, `${r1+1},${c1}`,
+                        `${r1},${c1-1}`, `${r1},${c1+1}`
+                    ].filter(key => playableCells.has(key));
+                    
+                    if (adjacentCells.length > 0) {
+                        const cell2 = adjacentCells[Math.floor(rng.next() * adjacentCells.length)];
+                        
+                        // Check that removing these won't isolate other cells
+                        playableCells.delete(cell1);
+                        playableCells.delete(cell2);
+                        
+                        // Verify no cells are isolated
+                        let hasIsolated = false;
+                        for (const checkKey of playableCells) {
+                            const [r, c] = checkKey.split(',').map(Number);
+                            const neighbors = [
+                                `${r-1},${c}`, `${r+1},${c}`,
+                                `${r},${c-1}`, `${r},${c+1}`
+                            ].filter(k => playableCells.has(k));
+                            
+                            if (neighbors.length === 0) {
+                                hasIsolated = true;
+                                break;
+                            }
+                        }
+                        
+                        // If it creates isolated cells, put them back
+                        if (hasIsolated) {
+                            playableCells.add(cell1);
+                            playableCells.add(cell2);
+                        } else {
+                            // Update our working array
+                            const idx1 = cellsArray.indexOf(cell1);
+                            const idx2 = cellsArray.indexOf(cell2);
+                            if (idx1 > -1) cellsArray.splice(idx1, 1);
+                            if (idx2 > -1) cellsArray.splice(cellsArray.indexOf(cell2), 1);
+                        }
+                    }
+                }
+            }
+            
+            // Ensure even number of playable cells (should already be even from pair removal)
+            if (playableCells.size % 2 !== 0) {
+                // Remove a pair of adjacent cells
+                const cells = Array.from(playableCells);
+                for (const cell of cells) {
+                    const [r, c] = cell.split(',').map(Number);
+                    const neighbors = [
+                        `${r-1},${c}`, `${r+1},${c}`,
+                        `${r},${c-1}`, `${r},${c+1}`
+                    ].filter(k => playableCells.has(k));
+                    
+                    if (neighbors.length > 0) {
+                        playableCells.delete(cell);
+                        playableCells.delete(neighbors[0]);
+                        break;
+                    }
+                }
+            }
+            
+            // Final validation: ensure no isolated cells
+            const finalCells = Array.from(playableCells);
+            for (const cell of finalCells) {
+                const [r, c] = cell.split(',').map(Number);
+                const neighbors = [
+                    `${r-1},${c}`, `${r+1},${c}`,
+                    `${r},${c-1}`, `${r},${c+1}`
+                ].filter(k => playableCells.has(k));
+                
+                // If a cell has no neighbors, remove it and an adjacent cell from the original set
+                if (neighbors.length === 0) {
+                    playableCells.delete(cell);
+                }
+            }
+            
+            // Generate regions using flood fill (only for playable cells)
+            regions = [];
+            const visitedRegions = Array(gridRows).fill(null).map(() => Array(gridCols).fill(false));
+            let regionId = 0;
+            const regionsList = [];
+
+            for (let row = 0; row < gridRows; row++) {
+                for (let col = 0; col < gridCols; col++) {
+                    if (!visitedRegions[row][col] && playableCells.has(`${row},${col}`)) {
+                        const regionSize = rng.nextInt(2, 5);
+                        const cells = floodFillRegion(row, col, regionSize, visitedRegions, rng);
+                        
+                        regionsList.push({
+                            id: regionId,
+                            cells: cells
+                        });
+                        
+                        regionId++;
+                    }
+                }
+            }
+
+            // Generate dominoes and place them to create a valid solution
+            generateDominoes(playableCells.size / 2, rng);
+            
+            // Generate a valid solution first
+            const solution = generateValidSolution(rng);
+            
+            if (!solution) {
+                // If we can't generate a solution, try again with different settings
+                console.warn('Failed to generate solution, retrying...');
+                generatePuzzle(seed + 1);
+                return;
+            }
+            
+            // Now generate rules based on the solution
+            regions = [];
+            for (const regionData of regionsList) {
+                const values = [];
+                
+                // Get the values in this region from the solution
+                for (const [row, col] of regionData.cells) {
+                    const placement = solution.find(p => {
+                        const { row: r, col: c, domino } = p;
+                        if (r === row && c === col) return true;
+                        if (domino.orientation === 'vertical' && r + 1 === row && c === col) return true;
+                        if (domino.orientation === 'horizontal' && r === row && c + 1 === col) return true;
+                        return false;
+                    });
+
+                    if (placement) {
+                        const { row: r, col: c, domino } = placement;
+                        const displayValues = getDominoValues(domino);
+                        if (r === row && c === col) {
+                            values.push(displayValues[0]);
+                        } else {
+                            values.push(displayValues[1]);
+                        }
+                    }
+                }
+                
+                // Generate rule based on the actual values
+                const rule = generateRuleFromValues(values, rng);
+                const color = rule.type === 'none' ? noRuleColor : regionColors[regionData.id % regionColors.length];
+                
+                regions.push({
+                    id: regionData.id,
+                    cells: regionData.cells,
+                    rule: rule,
+                    color: color
+                });
+            }
+            
+            placedDominoes = [];
+        }
+        
+        // Generate rule from actual values (guarantees solvability)
+        function generateRuleFromValues(values, rng) {
+            if (values.length === 0) {
+                return { type: 'none', label: '' };
+            }
+            
+            if (values.length === 1) {
+                return { type: 'none', label: '' };
+            }
+            
+            const sum = values.reduce((a, b) => a + b, 0);
+            const allSame = values.every(v => v === values[0]);
+            const allDifferent = new Set(values).size === values.length;
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            
+            // Choose a rule type that will work
+            const possibleRules = [];
+            
+            // Sum rule always works
+            possibleRules.push({ type: 'sum', value: sum, label: '' });
+            
+            // Equal rule if all are the same
+            if (allSame) {
+                possibleRules.push({ type: 'equal', label: '≡' });
+            }
+            
+            // Different rule if all are different
+            if (allDifferent && values.length <= 7) {
+                possibleRules.push({ type: 'different', label: '≠' });
+            }
+            
+            // Greater than rule
+            if (min > 0) {
+                possibleRules.push({ type: 'greater', value: rng.nextInt(0, min), label: '>' });
+            }
+            
+            // Less than rule
+            if (max < 6) {
+                possibleRules.push({ type: 'less', value: rng.nextInt(max + 1, 7), label: '<' });
+            }
+            
+            // Pick a random rule from possible ones
+            if (possibleRules.length > 0) {
+                return possibleRules[Math.floor(rng.next() * possibleRules.length)];
+            }
+            
+            // Fallback to sum
+            return { type: 'sum', value: sum, label: '' };
+        }
+        
+        // Generate a valid solution by placing dominoes
+        function generateValidSolution(rng) {
+            const availableDominoes = [...dominoes];
+            const solution = [];
+            const cellsList = Array.from(playableCells).map(key => {
+                const [r, c] = key.split(',').map(Number);
+                return [r, c];
+            });
+            
+            // Shuffle cells for randomness
+            for (let i = cellsList.length - 1; i > 0; i--) {
+                const j = Math.floor(rng.next() * (i + 1));
+                [cellsList[i], cellsList[j]] = [cellsList[j], cellsList[i]];
+            }
+            
+            const occupied = new Set();
+            
+            function tryPlace(cellIndex) {
+                if (cellIndex >= cellsList.length) {
+                    return solution.length * 2 === playableCells.size;
+                }
+                
+                const [row, col] = cellsList[cellIndex];
+                
+                if (occupied.has(`${row},${col}`)) {
+                    return tryPlace(cellIndex + 1);
+                }
+                
+                // Shuffle dominoes for variety
+                const indices = Array.from({length: availableDominoes.length}, (_, i) => i);
+                for (let i = indices.length - 1; i > 0; i--) {
+                    const j = Math.floor(rng.next() * (i + 1));
+                    [indices[i], indices[j]] = [indices[j], indices[i]];
+                }
+                
+                for (const i of indices) {
+                    const domino = availableDominoes[i];
+                    
+                    // Try orientations in random order
+                    const configs = [
+                        { orientation: 'vertical', flipped: false },
+                        { orientation: 'horizontal', flipped: false },
+                        { orientation: 'vertical', flipped: true },
+                        { orientation: 'horizontal', flipped: true }
+                    ];
+                    
+                    for (let ci = configs.length - 1; ci > 0; ci--) {
+                        const cj = Math.floor(rng.next() * (ci + 1));
+                        [configs[ci], configs[cj]] = [configs[cj], configs[ci]];
+                    }
+                    
+                    for (const config of configs) {
+                        domino.orientation = config.orientation;
+                        domino.flipped = config.flipped;
+                        
+                        if (!canPlaceDomino(row, col, domino)) continue;
+                        
+                        let row2, col2;
+                        if (domino.orientation === 'vertical') {
+                            row2 = row + 1;
+                            col2 = col;
+                        } else {
+                            row2 = row;
+                            col2 = col + 1;
+                        }
+                        
+                        if (occupied.has(`${row2},${col2}`)) continue;
+                        
+                        occupied.add(`${row},${col}`);
+                        occupied.add(`${row2},${col2}`);
+                        solution.push({ row, col, domino: { ...domino, id: domino.id } });
+                        availableDominoes.splice(i, 1);
+                        
+                        if (tryPlace(cellIndex + 1)) {
+                            return true;
+                        }
+                        
+                        occupied.delete(`${row},${col}`);
+                        occupied.delete(`${row2},${col2}`);
+                        solution.pop();
+                        availableDominoes.splice(i, 0, domino);
+                    }
+                }
+                
+                return false;
+            }
+            
+            if (tryPlace(0)) {
+                return solution;
+            }
+            
+            return null;
+        }
+
+        // Flood fill to create regions (only within playable cells)
+        function floodFillRegion(startRow, startCol, maxSize, visited, rng) {
+            const cells = [];
+            const queue = [[startRow, startCol]];
+            visited[startRow][startCol] = true;
+
+            while (queue.length > 0 && cells.length < maxSize) {
+                const [row, col] = queue.shift();
+                cells.push([row, col]);
+
+                // Get neighbors
+                const neighbors = [
+                    [row - 1, col],
+                    [row + 1, col],
+                    [row, col - 1],
+                    [row, col + 1]
+                ];
+
+                // Shuffle neighbors for randomness
+                const shuffled = rng.shuffle(neighbors);
+
+                for (const [nRow, nCol] of shuffled) {
+                    if (nRow >= 0 && nRow < gridRows && 
+                        nCol >= 0 && nCol < gridCols && 
+                        !visited[nRow][nCol] &&
+                        playableCells.has(`${nRow},${nCol}`) &&
+                        cells.length < maxSize &&
+                        rng.next() > 0.3) {
+                        visited[nRow][nCol] = true;
+                        queue.push([nRow, nCol]);
+                    }
+                }
+            }
+
+            return cells;
+        }
+
+        // Generate dominoes
+        function generateDominoes(count, rng) {
+            dominoes = [];
+            const used = new Set();
+
+            for (let i = 0; i < count; i++) {
+                let a, b, key;
+                do {
+                    a = rng.nextInt(0, 6);
+                    b = rng.nextInt(0, 6);
+                    key = Math.min(a, b) + '-' + Math.max(a, b);
+                } while (used.has(key));
+                
+                used.add(key);
+                dominoes.push({
+                    id: i,
+                    values: [a, b],
+                    orientation: 'vertical', // 'vertical' or 'horizontal'
+                    flipped: false, // whether values are reversed
+                    placed: false
+                });
+            }
+        }
+        
+        // Get current domino values based on orientation and flip
+        function getDominoValues(domino) {
+            if (domino.flipped) {
+                return [domino.values[1], domino.values[0]];
+            }
+            return domino.values;
+        }
+
+        // Render grid
+        function renderGrid() {
+            const gridEl = document.getElementById('grid');
+            gridEl.innerHTML = '';
+            gridEl.style.gridTemplateColumns = `repeat(${gridCols}, 50px)`;
+
+            for (let row = 0; row < gridRows; row++) {
+                for (let col = 0; col < gridCols; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+
+                    // Mark non-playable cells as invisible
+                    if (!playableCells.has(`${row},${col}`)) {
+                        cell.classList.add('invisible');
+                        gridEl.appendChild(cell);
+                        continue;
+                    }
+
+                    // Find region and apply color
+                    const region = regions.find(r => 
+                        r.cells.some(([r, c]) => r === row && c === col)
+                    );
+
+                    if (region) {
+                        cell.style.backgroundColor = region.color;
+                        
+                        // Add rule label to first cell of region (if rule has a label)
+                        if (region.cells[0][0] === row && region.cells[0][1] === col && region.rule.type !== 'none') {
+                            const label = document.createElement('div');
+                            label.className = 'rule-label';
+                            
+                            // Format label text
+                            let labelText = '';
+                            if (region.rule.type === 'sum') {
+                                labelText = region.rule.value.toString();
+                            } else {
+                                labelText = region.rule.label + (region.rule.value !== undefined ? region.rule.value : '');
+                            }
+                            
+                            label.textContent = labelText;
+                            cell.appendChild(label);
+                        }
+                    }
+
+                    // Add border between regions
+                    const borders = getRegionBorders(row, col);
+                    if (borders.top) cell.style.borderTop = '4px solid rgba(0, 0, 0, 0.8)';
+                    if (borders.right) cell.style.borderRight = '4px solid rgba(0, 0, 0, 0.8)';
+                    if (borders.bottom) cell.style.borderBottom = '4px solid rgba(0, 0, 0, 0.8)';
+                    if (borders.left) cell.style.borderLeft = '4px solid rgba(0, 0, 0, 0.8)';
+
+                    // Make droppable
+                    cell.addEventListener('dragover', handleDragOver);
+                    cell.addEventListener('drop', handleDrop);
+
+                    gridEl.appendChild(cell);
+                }
+            }
+
+            // Render placed dominoes
+            renderPlacedDominoes();
+        }
+
+        // Get region borders
+        function getRegionBorders(row, col) {
+            const region = regions.find(r => 
+                r.cells.some(([r, c]) => r === row && c === col)
+            );
+
+            if (!region) return { top: false, right: false, bottom: false, left: false };
+
+            const inRegion = (r, c) => region.cells.some(([rr, cc]) => rr === r && cc === c);
+
+            return {
+                top: row === 0 || !inRegion(row - 1, col),
+                right: col === gridCols - 1 || !inRegion(row, col + 1),
+                bottom: row === gridRows - 1 || !inRegion(row + 1, col),
+                left: col === 0 || !inRegion(row, col - 1)
+            };
+        }
+
+        // Render dominoes list
+        function renderDominoes() {
+            const listEl = document.getElementById('dominosList');
+            listEl.innerHTML = '';
+
+            dominoes.forEach(domino => {
+                const dominoEl = document.createElement('div');
+                dominoEl.className = 'domino';
+                if (domino.orientation === 'horizontal') {
+                    dominoEl.classList.add('horizontal');
+                } else {
+                    dominoEl.classList.add('vertical');
+                }
+                if (domino.placed) {
+                    dominoEl.classList.add('used');
+                }
+                dominoEl.draggable = true;
+                dominoEl.dataset.dominoId = domino.id;
+
+                const displayValues = getDominoValues(domino);
+                
+                const half1 = document.createElement('div');
+                half1.className = 'domino-half';
+                half1.appendChild(createPips(displayValues[0]));
+
+                const half2 = document.createElement('div');
+                half2.className = 'domino-half';
+                half2.appendChild(createPips(displayValues[1]));
+
+                dominoEl.appendChild(half1);
+                dominoEl.appendChild(half2);
+
+                // Drag events
+                dominoEl.addEventListener('dragstart', handleDragStart);
+                dominoEl.addEventListener('dragend', handleDragEnd);
+                
+                // Click to rotate through all 4 orientations
+                dominoEl.addEventListener('click', (e) => {
+                    if (!domino.placed) {
+                        // Cycle through: vertical -> horizontal -> vertical-flipped -> horizontal-flipped
+                        if (domino.orientation === 'vertical' && !domino.flipped) {
+                            domino.orientation = 'horizontal';
+                        } else if (domino.orientation === 'horizontal' && !domino.flipped) {
+                            domino.orientation = 'vertical';
+                            domino.flipped = true;
+                        } else if (domino.orientation === 'vertical' && domino.flipped) {
+                            domino.orientation = 'horizontal';
+                        } else {
+                            domino.orientation = 'vertical';
+                            domino.flipped = false;
+                        }
+                        renderDominoes();
+                    }
+                });
+
+                listEl.appendChild(dominoEl);
+            });
+        }
+
+        // Render placed dominoes on grid
+        function renderPlacedDominoes() {
+            // Clear old domino overlays
+            document.querySelectorAll('.placed-domino-overlay').forEach(el => el.remove());
+            
+            const gridEl = document.getElementById('grid');
+            const gridRect = gridEl.getBoundingClientRect();
+            
+            placedDominoes.forEach((placement, index) => {
+                const { row, col, domino } = placement;
+                const cells = document.querySelectorAll('.cell');
+                
+                const cell1 = cells[row * gridCols + col];
+                if (!cell1) return;
+                
+                // Keep cells marked but don't add visible content
+                // (the overlay will show the domino)
+                
+                let cell2;
+                if (domino.orientation === 'vertical' && row + 1 < gridRows) {
+                    cell2 = cells[(row + 1) * gridCols + col];
+                } else if (domino.orientation === 'horizontal' && col + 1 < gridCols) {
+                    cell2 = cells[row * gridCols + (col + 1)];
+                }
+
+                // Create overlay that spans both cells
+                const overlay = document.createElement('div');
+                overlay.className = 'placed-domino-overlay ' + domino.orientation;
+                overlay.dataset.dominoId = domino.id;
+                overlay.draggable = true;
+                overlay.style.pointerEvents = 'auto';
+                overlay.style.cursor = 'grab';
+                
+                const cell1Rect = cell1.getBoundingClientRect();
+                const cell2Rect = cell2 ? cell2.getBoundingClientRect() : cell1Rect;
+                
+                if (domino.orientation === 'vertical') {
+                    overlay.style.left = (cell1Rect.left - gridRect.left) + 'px';
+                    overlay.style.top = (cell1Rect.top - gridRect.top) + 'px';
+                    overlay.style.width = cell1Rect.width + 'px';
+                    overlay.style.height = (cell2Rect.bottom - cell1Rect.top) + 'px';
+                } else {
+                    overlay.style.left = (cell1Rect.left - gridRect.left) + 'px';
+                    overlay.style.top = (cell1Rect.top - gridRect.top) + 'px';
+                    overlay.style.width = (cell2Rect.right - cell1Rect.left) + 'px';
+                    overlay.style.height = cell1Rect.height + 'px';
+                }
+
+                // Add pips to overlay
+                const displayValues = getDominoValues(domino);
+                
+                const section1 = document.createElement('div');
+                section1.className = 'domino-section';
+                section1.appendChild(createPips(displayValues[0]));
+                
+                // Add numeric label for clarity
+                const num1 = document.createElement('div');
+                num1.className = 'domino-number';
+                num1.textContent = displayValues[0];
+                section1.appendChild(num1);
+                
+                const divider = document.createElement('div');
+                divider.className = 'domino-divider';
+                
+                const section2 = document.createElement('div');
+                section2.className = 'domino-section';
+                section2.appendChild(createPips(displayValues[1]));
+                
+                // Add numeric label for clarity
+                const num2 = document.createElement('div');
+                num2.className = 'domino-number';
+                num2.textContent = displayValues[1];
+                section2.appendChild(num2);
+                
+                overlay.appendChild(section1);
+                overlay.appendChild(divider);
+                overlay.appendChild(section2);
+                
+                // Add drag events
+                overlay.addEventListener('dragstart', handleDominoRemove);
+                overlay.addEventListener('dragend', handleDragEnd);
+                
+                gridEl.appendChild(overlay);
+            });
+        }
+
+        // Drag and drop handlers
+        function handleDragStart(e) {
+            const dominoId = parseInt(e.target.dataset.dominoId);
+            draggedDomino = dominoes.find(d => d.id === dominoId);
+            e.target.classList.add('dragging');
+            
+            // Set drag data
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', dominoId);
+        }
+
+        function handleDominoRemove(e) {
+            const dominoId = parseInt(e.target.dataset.dominoId);
+            const domino = dominoes.find(d => d.id === dominoId);
+            
+            if (domino) {
+                // Remove from placed dominoes
+                placedDominoes = placedDominoes.filter(p => p.domino.id !== dominoId);
+                domino.placed = false;
+                draggedDomino = domino;
+                
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', dominoId);
+            }
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            clearPreviewHighlight();
+            
+            // If domino was removed but not placed elsewhere, re-render
+            if (draggedDomino && !draggedDomino.placed) {
+                renderGrid();
+                renderDominoes();
+            }
+            
+            draggedDomino = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            
+            if (!draggedDomino) return;
+            
+            const row = parseInt(e.target.dataset.row);
+            const col = parseInt(e.target.dataset.col);
+            
+            if (!isNaN(row) && !isNaN(col)) {
+                showPreviewHighlight(row, col, draggedDomino);
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            clearPreviewHighlight();
+            
+            if (!draggedDomino) return;
+
+            const row = parseInt(e.target.dataset.row);
+            const col = parseInt(e.target.dataset.col);
+
+            // Check if placement is valid
+            if (!isNaN(row) && !isNaN(col) && canPlaceDomino(row, col, draggedDomino)) {
+                placeDomino(row, col, draggedDomino);
+                draggedDomino.placed = true;
+                renderGrid();
+                renderDominoes();
+            }
+
+            draggedDomino = null;
+        }
+
+        // Preview highlight functions
+        function showPreviewHighlight(row, col, domino) {
+            clearPreviewHighlight();
+            
+            const cells = document.querySelectorAll('.cell');
+            const cell1 = cells[row * gridCols + col];
+            
+            if (cell1 && playableCells.has(`${row},${col}`)) {
+                cell1.classList.add('preview-highlight');
+                
+                let cell2;
+                if (domino.orientation === 'vertical' && row + 1 < gridRows) {
+                    cell2 = cells[(row + 1) * gridCols + col];
+                    if (cell2 && playableCells.has(`${row + 1},${col}`)) {
+                        cell2.classList.add('preview-highlight');
+                    }
+                } else if (domino.orientation === 'horizontal' && col + 1 < gridCols) {
+                    cell2 = cells[row * gridCols + (col + 1)];
+                    if (cell2 && playableCells.has(`${row},${col + 1}`)) {
+                        cell2.classList.add('preview-highlight');
+                    }
+                }
+            }
+        }
+
+        function clearPreviewHighlight() {
+            document.querySelectorAll('.preview-highlight').forEach(cell => {
+                cell.classList.remove('preview-highlight');
+            });
+        }
+
+        // Check if domino can be placed
+        function canPlaceDomino(row, col, domino) {
+            // Check if first cell is playable and not occupied
+            if (!playableCells.has(`${row},${col}`) || isCellOccupied(row, col)) return false;
+
+            if (domino.orientation === 'vertical') {
+                if (row + 1 >= gridRows) return false;
+                if (!playableCells.has(`${row + 1},${col}`) || isCellOccupied(row + 1, col)) return false;
+            } else {
+                if (col + 1 >= gridCols) return false;
+                if (!playableCells.has(`${row},${col + 1}`) || isCellOccupied(row, col + 1)) return false;
+            }
+
+            return true;
+        }
+
+        // Check if cell is occupied
+        function isCellOccupied(row, col) {
+            return placedDominoes.some(p => {
+                const { row: r, col: c, domino } = p;
+                if (r === row && c === col) return true;
+                if (domino.orientation === 'vertical' && r + 1 === row && c === col) return true;
+                if (domino.orientation === 'horizontal' && r === row && c + 1 === col) return true;
+                return false;
+            });
+        }
+
+        // Place domino
+        function placeDomino(row, col, domino) {
+            placedDominoes.push({ row, col, domino });
+            
+            // Auto-check if all dominoes are placed
+            if (placedDominoes.length === dominoes.length) {
+                setTimeout(() => checkSolution(), 300);
+            }
+        }
+
+        // Clear board
+        function clearBoard() {
+            placedDominoes = [];
+            dominoes.forEach(d => d.placed = false);
+            renderGrid();
+            renderDominoes();
+            hideMessage();
+        }
+
+        // Check solution
+        function checkSolution() {
+            // Check if all playable cells are covered
+            const totalCells = playableCells.size;
+            const coveredCells = placedDominoes.length * 2;
+
+            if (coveredCells !== totalCells) {
+                showMessage('Not all cells are covered!', 'error');
+                return false;
+            }
+
+            // Check all region rules
+            for (const region of regions) {
+                const values = [];
+                
+                for (const [row, col] of region.cells) {
+                    const placement = placedDominoes.find(p => {
+                        const { row: r, col: c, domino } = p;
+                        if (r === row && c === col) return true;
+                        if (domino.orientation === 'vertical' && r + 1 === row && c === col) return true;
+                        if (domino.orientation === 'horizontal' && r === row && c + 1 === col) return true;
+                        return false;
+                    });
+
+                    if (placement) {
+                        const { row: r, col: c, domino } = placement;
+                        const displayValues = getDominoValues(domino);
+                        if (r === row && c === col) {
+                            values.push(displayValues[0]);
+                        } else {
+                            values.push(displayValues[1]);
+                        }
+                    }
+                }
+
+                if (!checkRegionRule(region.rule, values)) {
+                    showMessage(`Region rule violated: ${region.rule.label}${region.rule.value || ''}`, 'error');
+                    return false;
+                }
+            }
+
+            showMessage('🎉 Puzzle solved correctly!', 'success');
+            return true;
+        }
+
+        // Check region rule
+        function checkRegionRule(rule, values) {
+            switch(rule.type) {
+                case 'none':
+                    return true; // No rule to check
+                case 'sum':
+                    return values.reduce((a, b) => a + b, 0) === rule.value;
+                case 'different':
+                    return new Set(values).size === values.length;
+                case 'equal':
+                    return values.every(v => v === values[0]);
+                case 'greater':
+                    return values.every(v => v > rule.value);
+                case 'less':
+                    return values.every(v => v < rule.value);
+                default:
+                    return true;
+            }
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = 'message ' + type;
+        }
+
+        // Hide message
+        function hideMessage() {
+            const messageEl = document.getElementById('message');
+            messageEl.className = 'message';
+        }
+
+        // Solve puzzle using backtracking
+        function solvePuzzle() {
+            // Clear current placements
+            clearBoard();
+            
+            const availableDominoes = [...dominoes];
+            const solution = [];
+            const cellsList = Array.from(playableCells).map(key => {
+                const [r, c] = key.split(',').map(Number);
+                return [r, c];
+            });
+            
+            // Track which cells are occupied
+            const occupied = new Set();
+            
+            function tryPlaceDomino(cellIndex) {
+                if (cellIndex >= cellsList.length) {
+                    // All cells covered, check if solution is valid
+                    return checkSolutionValidity(solution);
+                }
+                
+                const [row, col] = cellsList[cellIndex];
+                
+                // If this cell is already occupied, skip it
+                if (occupied.has(`${row},${col}`)) {
+                    return tryPlaceDomino(cellIndex + 1);
+                }
+                
+                // Try each available domino
+                for (let i = 0; i < availableDominoes.length; i++) {
+                    const domino = availableDominoes[i];
+                    
+                    // Try all 4 orientations
+                    const configs = [
+                        { orientation: 'vertical', flipped: false },
+                        { orientation: 'horizontal', flipped: false },
+                        { orientation: 'vertical', flipped: true },
+                        { orientation: 'horizontal', flipped: true }
+                    ];
+                    
+                    for (const config of configs) {
+                        domino.orientation = config.orientation;
+                        domino.flipped = config.flipped;
+                        
+                        // Check if we can place this domino here
+                        if (!canPlaceDomino(row, col, domino)) continue;
+                        
+                        // Get the second cell
+                        let row2, col2;
+                        if (domino.orientation === 'vertical') {
+                            row2 = row + 1;
+                            col2 = col;
+                        } else {
+                            row2 = row;
+                            col2 = col + 1;
+                        }
+                        
+                        if (occupied.has(`${row2},${col2}`)) continue;
+                        
+                        // Place domino
+                        occupied.add(`${row},${col}`);
+                        occupied.add(`${row2},${col2}`);
+                        solution.push({ row, col, domino: { ...domino } });
+                        availableDominoes.splice(i, 1);
+                        
+                        // Recursively try to place remaining dominoes
+                        if (tryPlaceDomino(cellIndex + 1)) {
+                            return true;
+                        }
+                        
+                        // Backtrack
+                        occupied.delete(`${row},${col}`);
+                        occupied.delete(`${row2},${col2}`);
+                        solution.pop();
+                        availableDominoes.splice(i, 0, domino);
+                    }
+                }
+                
+                return false;
+            }
+            
+            // Try to solve
+            const startTime = Date.now();
+            const solved = tryPlaceDomino(0);
+            const elapsed = Date.now() - startTime;
+            
+            if (solved) {
+                // Apply solution
+                placedDominoes = solution.map(s => ({
+                    row: s.row,
+                    col: s.col,
+                    domino: dominoes.find(d => d.id === s.domino.id)
+                }));
+                
+                // Update domino states
+                solution.forEach(s => {
+                    const domino = dominoes.find(d => d.id === s.domino.id);
+                    domino.orientation = s.domino.orientation;
+                    domino.flipped = s.domino.flipped;
+                    domino.placed = true;
+                });
+                
+                renderGrid();
+                renderDominoes();
+                showMessage(`Solution found in ${elapsed}ms!`, 'success');
+                return true;
+            } else {
+                showMessage('No solution found (puzzle may be unsolvable)', 'error');
+                return false;
+            }
+        }
+        
+        // Check if a potential solution is valid
+        function checkSolutionValidity(solution) {
+            // Build a map of cell -> value
+            const cellValues = new Map();
+            
+            for (const placement of solution) {
+                const { row, col, domino } = placement;
+                const displayValues = getDominoValues(domino);
+                
+                cellValues.set(`${row},${col}`, displayValues[0]);
+                
+                if (domino.orientation === 'vertical') {
+                    cellValues.set(`${row + 1},${col}`, displayValues[1]);
+                } else {
+                    cellValues.set(`${row},${col + 1}`, displayValues[1]);
+                }
+            }
+            
+            // Check each region
+            for (const region of regions) {
+                const values = [];
+                for (const [row, col] of region.cells) {
+                    const val = cellValues.get(`${row},${col}`);
+                    if (val !== undefined) {
+                        values.push(val);
+                    }
+                }
+                
+                if (!checkRegionRule(region.rule, values)) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Event listeners
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            const seedInput = document.getElementById('seedInput');
+            const seed = seedInput.value ? parseInt(seedInput.value) : getDailySeed();
+            seedInput.value = seed;
+            generatePuzzle(seed);
+            renderGrid();
+            renderDominoes();
+            hideMessage();
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', clearBoard);
+        document.getElementById('checkBtn').addEventListener('click', checkSolution);
+        document.getElementById('solveBtn').addEventListener('click', solvePuzzle);
+
+        // Make dominoes container a drop zone
+        const dominoesContainer = document.getElementById('dominoesContainer');
+        dominoesContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        dominoesContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (draggedDomino) {
+                // Remove from board if it was placed
+                placedDominoes = placedDominoes.filter(p => p.domino.id !== draggedDomino.id);
+                draggedDomino.placed = false;
+                draggedDomino = null;
+                renderGrid();
+                renderDominoes();
+            }
+        });
+
+        // Initialize with daily puzzle
+        window.addEventListener('load', () => {
+            const dailySeed = getDailySeed();
+            document.getElementById('seedInput').value = dailySeed;
+            generatePuzzle(dailySeed);
+            renderGrid();
+            renderDominoes();
+        });
+    </script>
+</body>
+</html>
+

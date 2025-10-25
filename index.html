@@ -22,11 +22,20 @@
 	<div class="top">
 		<nav class="navbar">
 			<ul class="nav-links">
-				<a class="nav-button" href="#home">Home</a>
 				<a class="nav-button" href="#about">About</a>
 				<a class="nav-button" href="#projects">Projects</a>
-				<a class="nav-button" href="photos.html">Photos</a>
 				<a class="nav-button" href="#contact">Contact</a>
+                <div class="dropdown">
+                    <a class="nav-button dropdown-toggle" href="#">More</a>
+                    <div class="dropdown-content">
+                        <a href="gallery/photos.html">Photos</a>
+                        <a href="entertainment/steam-games.html">Steam Games</a>
+                        <a href="tools/internships.html">Internship Sorter</a>
+                        <!-- <a href="entertainment/spotify-tracks.html">Spotify Tracks</a> -->
+                        <!-- <a href="games/platformer.html">Platformer Game</a> -->
+                        <!-- <a href="games/tron-runner.html">Tron Runner</a> -->
+                    </div>
+                </div>
 			</ul>
 		</nav>
 		<div class="profile-div">
@@ -55,7 +64,7 @@
 			</div>
 		<div class="about-buttons-div">
 			<button class="about-button"><a class="resume-link" href="resume.html">My Resume</a></button>
-			<button class="about-button"><a class="resume-link" href="photos.html">My Photos</a></button>
+			<button class="about-button"><a class="resume-link" href="gallery/photos.html">My Photos</a></button>
 			<button class="about-button"><a class="resume-link" target="_blank" href="https://github.com/spencerboggs?tab=repositories">My Projects</a></button>
 		</div>
 		<h3 class="section-title">Technical Skills</h3>
@@ -184,6 +193,24 @@
 		<p>Built a Flask app to scrape and display trending GitHub repositories with details like stars, daily growth, and
 		descriptions. Used BeautifulSoup for scraping, JSON for data storage, and HTML/CSS for a responsive UI, enabling sorting
 		and dynamic updates.</p>
+	</div>
+	</a>
+
+	<a href="entertainment/steam-games.html" style="text-decoration: none;">
+	<div class="project">
+		<h3>Steam Game Collection</h3>
+		<p>Interactive Steam game library viewer with real-time statistics, playtime tracking, and platform compatibility. Features
+		client-side data fetching from Steam API, NSFW content filtering, and responsive design. Built with vanilla JavaScript
+		and integrated into my portfolio website.</p>
+	</div>
+	</a>
+
+	<a href="entertainment/spotify-tracks.html" style="text-decoration: none;">
+	<div class="project">
+		<h3>Nostalgic Spotify Tracks</h3>
+		<p>Interactive Spotify track viewer for discovering older favorite songs with album artwork, popularity metrics, and search functionality.
+		Features client-side authentication, manual track input fallback, and responsive grid layout. Built with vanilla JavaScript
+		and integrated into my portfolio website.</p>
 	</div>
 	</a>
 

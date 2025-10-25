@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Collection Viewer - Spencer Boggs</title>
+    <link rel="icon" href="../icons/web_icon.png">
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Steam-specific styles that integrate with existing site */
+        .steam-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .steam-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .steam-header h1 {
+            font-size: 2.8rem;
+            margin: 0;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.05em;
+        }
+
+        .title {
+            white-space: nowrap !important;
+            max-width: 100% !important;
+            font-size: 2.2rem !important;
+        }
+
+        .steam-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .steam-controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .steam-search-container {
+            flex: 1;
+            min-width: 250px;
+            max-width: 500px;
+        }
+
+        .steam-search {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        .steam-search:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00c6ff;
+            box-shadow: 0 0 0 2px rgba(0, 198, 255, 0.2);
+        }
+
+        .steam-search::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .steam-sort-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .steam-sort-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .steam-sort-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .steam-sort-btn.active {
+            background: #00c6ff;
+            color: #050a13;
+            font-weight: 600;
+        }
+
+        .steam-credentials-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+            background: linear-gradient(145deg, #121a2a, #0d1421);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .steam-form-group {
+            margin-bottom: 20px;
+        }
+
+        .steam-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .steam-form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        .steam-form-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00c6ff;
+            box-shadow: 0 0 0 2px rgba(0, 198, 255, 0.2);
+        }
+
+        .steam-submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #00c6ff;
+            color: #050a13;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .steam-submit-btn:hover {
+            background: #00b4e6;
+        }
+
+        .steam-games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .steam-game {
+            background: linear-gradient(145deg, #121a2a, #0d1421);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .steam-game:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .steam-cover-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            overflow: hidden;
+        }
+
+        .steam-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .steam-game:hover .steam-cover {
+            transform: scale(1.03);
+        }
+
+        .steam-info {
+            padding: 20px;
+            margin-top: -35px;
+        }
+
+        .steam-game h2 {
+            font-size: 1.4rem;
+            margin: 0 0 15px 0;
+            color: white;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .steam-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .steam-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .steam-stat-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .steam-stat-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .steam-loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .steam-error {
+            text-align: center;
+            padding: 40px;
+            color: #ff2d75;
+        }
+
+        .steam-no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.1rem;
+        }
+
+        .steam-nsfw-warning {
+            background: rgba(255, 45, 117, 0.1);
+            border: 1px solid rgba(255, 45, 117, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ff2d75;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .steam-games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .steam-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .steam-controls-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .steam-search-container {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <section id="home"></section>
+    <div class="top">
+        <nav class="navbar">
+            <ul class="nav-links">
+                <a class="nav-button" href="../index.html#about">About</a>
+                <a class="nav-button" href="../index.html#projects">Projects</a>
+                <a class="nav-button" href="../index.html#contact">Contact</a>
+                <div class="dropdown">
+                    <a class="nav-button dropdown-toggle" href="#">More</a>
+                    <div class="dropdown-content">
+                        <a href="../gallery/photos.html">Photos</a>
+                        <a href="steam-games.html">Steam Games</a>
+                        <a href="../tools/internships.html">Internship Sorter</a>
+                        <!-- <a href="spotify-tracks.html">Spotify Tracks</a> -->
+                        <!-- <a href="../games/platformer.html">Platformer Game</a> -->
+                        <!-- <a href="../games/tron-runner.html">Tron Runner</a> -->
+                    </div>
+                </div>
+            </ul>
+        </nav>
+        <div class="profile-div">
+            <div class="home">
+                <h1 class="title" id="title">Steam Collection Viewer</h1>
+                <p class="subtitle">Explore your gaming library and statistics.</p>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <div class="steam-container">
+        <!-- Credentials Form (shown initially) -->
+        <div id="credentialsForm" class="steam-credentials-form">
+            <h2 style="text-align: center; margin-bottom: 30px; color: white;">Steam API Setup</h2>
+            <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 30px;">
+                To view your Steam games, you'll need to provide your Steam API key and Steam ID64.
+                <br><br>
+                <strong>Note:</strong> This data is processed locally in your browser and not stored on any server.
+                <br><br>
+                <strong>Troubleshooting:</strong> If you get CORS errors, try using a different browser or the manual input option.
+            </p>
+            <form id="steamCredentialsForm">
+                <div class="steam-form-group">
+                    <label for="steamApiKey">Steam API Key:</label>
+                    <input type="text" id="steamApiKey" placeholder="Enter your Steam API key" required>
+                </div>
+                <div class="steam-form-group">
+                    <label for="steamId64">Steam ID64:</label>
+                    <input type="text" id="steamId64" placeholder="Enter your Steam ID64" required>
+                </div>
+                <button type="submit" class="steam-submit-btn">Load My Games</button>
+            </form>
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">
+                <strong>How to get your credentials:</strong><br>
+                • <strong>Steam API Key:</strong> Visit <a href="https://steamcommunity.com/dev/apikey" target="_blank" style="color: #00c6ff;">steamcommunity.com/dev/apikey</a><br>
+                • <strong>Steam ID64:</strong> Visit <a href="https://steamid.io/" target="_blank" style="color: #00c6ff;">steamid.io</a> and enter your Steam profile URL
+            </div>
+            <div style="margin-top: 15px; text-align: center;">
+                <button onclick="clearStoredCredentials()" class="steam-submit-btn" style="width: auto; padding: 8px 16px; background: rgba(255, 255, 255, 0.2); font-size: 0.9rem; border: 1px solid rgba(255, 255, 255, 0.3);">Clear Stored Credentials</button>
+            </div>
+        </div>
+
+
+        <!-- Controls (shown after credentials) -->
+        <div id="steamControls" class="steam-controls" style="display: none;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button onclick="clearStoredCredentials()" class="steam-submit-btn" style="width: auto; padding: 8px 16px; background: rgba(255, 255, 255, 0.2); font-size: 0.9rem; border: 1px solid rgba(255, 255, 255, 0.3);">Switch Account</button>
+            </div>
+            <div class="steam-controls-row">
+                <div class="steam-search-container">
+                    <input type="text" class="steam-search" placeholder="Search games..." id="searchInput">
+                </div>
+            </div>
+            <div class="steam-controls-row">
+                <div class="steam-sort-buttons">
+                    <button class="steam-sort-btn" data-sort="name" data-default-direction="asc">Name (A-Z)</button>
+                    <button class="steam-sort-btn" data-sort="playtime" data-default-direction="desc">Playtime</button>
+                    <button class="steam-sort-btn" data-sort="last_played" data-default-direction="desc">Last Played</button>
+                    <span style="width: 1px; height: 36px; background: rgba(255, 255, 255, 0.1); display: inline-block; margin: 0 10px; vertical-align: middle;"></span>
+                    <button class="steam-sort-btn" data-sort="windows" data-default-direction="desc">Windows</button>
+                    <button class="steam-sort-btn" data-sort="mac" data-default-direction="desc">Mac</button>
+                    <button class="steam-sort-btn" data-sort="linux" data-default-direction="desc">Linux</button>
+                    <button class="steam-sort-btn" data-sort="deck" data-default-direction="desc">Steam Deck</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="steam-loading" style="display: none;">
+            <div style="width: 50px; height: 50px; border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid #00c6ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            Loading your Steam games...
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="steam-error" style="display: none;">
+            <h3>Error Loading Games</h3>
+            <p id="errorMessage">Failed to load your Steam games. Please check your credentials and try again.</p>
+            <div style="margin-top: 20px;">
+                <button onclick="showCredentialsForm()" class="steam-submit-btn" style="width: auto; margin: 10px; padding: 10px 20px;">Try Again</button>
+                <button onclick="showManualInput()" class="steam-submit-btn" style="width: auto; margin: 10px; padding: 10px 20px; background: rgba(255, 255, 255, 0.1);">Manual Input</button>
+            </div>
+        </div>
+
+        <!-- Manual Input Form -->
+        <div id="manualInputForm" class="steam-credentials-form" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 30px; color: white;">Manual Game Input</h2>
+            <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 30px;">
+                If the API is not working, you can manually add some of your favorite games to display.
+            </p>
+            <form id="manualGameForm">
+                <div class="steam-form-group">
+                    <label for="gameName">Game Name:</label>
+                    <input type="text" id="gameName" placeholder="Enter game name" required>
+                </div>
+                <div class="steam-form-group">
+                    <label for="playtimeHours">Playtime (hours):</label>
+                    <input type="number" id="playtimeHours" placeholder="Enter playtime in hours" min="0" step="0.1">
+                </div>
+                <div class="steam-form-group">
+                    <label for="lastPlayed">Last Played:</label>
+                    <input type="date" id="lastPlayed">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="steam-submit-btn" style="flex: 1;">Add Game</button>
+                    <button type="button" onclick="showCredentialsForm()" class="steam-submit-btn" style="flex: 1; background: rgba(255, 255, 255, 0.1);">Back to API</button>
+                </div>
+            </form>
+            <div id="manualGamesList" style="margin-top: 30px;">
+                <h3 style="color: white; margin-bottom: 15px;">Your Games:</h3>
+                <div id="manualGamesContainer"></div>
+                <button onclick="displayManualGames()" class="steam-submit-btn" style="width: 100%; margin-top: 20px;">View My Games</button>
+            </div>
+        </div>
+
+        <!-- Games Grid -->
+        <div id="gamesContainer" class="steam-games-grid" style="display: none;">
+            <!-- Games will be populated here -->
+        </div>
+    </div>
+
+    <script>
+
+        // Steam API configuration
+        let steamApiKey = '';
+        let steamId64 = '';
+        let gamesData = [];
+        let filteredGames = [];
+
+        // DOM elements
+        const credentialsForm = document.getElementById('credentialsForm');
+        const steamControls = document.getElementById('steamControls');
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const gamesContainer = document.getElementById('gamesContainer');
+        const nsfwWarning = document.getElementById('nsfwWarning');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize dropdown functionality
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                const toggle = dropdown.querySelector('.dropdown-toggle');
+                const content = dropdown.querySelector('.dropdown-content');
+                
+                if (toggle && content) {
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!dropdown.contains(e.target)) {
+                            content.style.display = 'none';
+                        }
+                    });
+                }
+            });
+            
+            // Check if credentials are stored
+            const storedApiKey = localStorage.getItem('steamApiKey');
+            const storedId64 = localStorage.getItem('steamId64');
+            
+            if (storedApiKey && storedId64) {
+                steamApiKey = storedApiKey;
+                steamId64 = storedId64;
+                loadGames();
+            }
+
+            // Form submission
+            document.getElementById('steamCredentialsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                steamApiKey = document.getElementById('steamApiKey').value;
+                steamId64 = document.getElementById('steamId64').value;
+                
+                // Store credentials
+                localStorage.setItem('steamApiKey', steamApiKey);
+                localStorage.setItem('steamId64', steamId64);
+                
+                loadGames();
+            });
+
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterGames(searchTerm);
+            });
+
+            // Sort functionality
+            document.querySelectorAll('.steam-sort-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const sortType = this.dataset.sort;
+                    const direction = this.dataset.defaultDirection || 'asc';
+                    sortGames(sortType, direction);
+                    
+                    // Update active button
+                    document.querySelectorAll('.steam-sort-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        async function loadGames() {
+            showLoading();
+            
+            try {
+                const steamUrl = `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${steamApiKey}&steamid=${steamId64}&include_appinfo=true&include_played_free_games=true&include_free_sub=true&skip_unvetted_apps=true&include_extended_appinfo=true`;
+                
+                // Try multiple CORS proxy services with better error handling
+                const proxyServices = [
+                    'https://api.allorigins.win/raw?url=',
+                    'https://corsproxy.io/?',
+                    'https://thingproxy.freeboard.io/fetch/',
+                    'https://api.codetabs.com/v1/proxy?quest='
+                ];
+                
+                let response, data;
+                let success = false;
+                let lastError = '';
+                
+                for (let i = 0; i < proxyServices.length; i++) {
+                    try {
+                        console.log(`Trying proxy service ${i + 1}/${proxyServices.length}...`);
+                        const proxyUrl = proxyServices[i];
+                        const url = proxyUrl + encodeURIComponent(steamUrl);
+                        
+                        response = await fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                            mode: 'cors'
+                        });
+                        
+                        if (response.ok) {
+                            const responseText = await response.text();
+                            try {
+                                data = JSON.parse(responseText);
+                                if (data.response && data.response.games) {
+                                    console.log(`Success with proxy service ${i + 1}`);
+                                    success = true;
+                                    break;
+                                }
+                            } catch (parseError) {
+                                console.log(`Failed to parse response from proxy ${i + 1}:`, parseError.message);
+                                lastError = `Proxy ${i + 1} returned invalid JSON`;
+                                continue;
+                            }
+                        } else {
+                            lastError = `Proxy ${i + 1} returned status ${response.status}`;
+                        }
+                    } catch (proxyError) {
+                        console.log(`Proxy service ${i + 1} failed:`, proxyError.message);
+                        lastError = `Proxy ${i + 1}: ${proxyError.message}`;
+                        continue;
+                    }
+                }
+                
+                if (!success) {
+                    // Try direct call as last resort
+                    try {
+                        console.log('Trying direct API call...');
+                        response = await fetch(steamUrl, {
+                            method: 'GET',
+                            mode: 'cors'
+                        });
+                        data = await response.json();
+                        
+                        if (data.response && data.response.games) {
+                            success = true;
+                        }
+                    } catch (directError) {
+                        console.log('Direct call also failed:', directError.message);
+                        lastError = `Direct call: ${directError.message}`;
+                    }
+                }
+                
+                if (success && data.response && data.response.games) {
+                    gamesData = data.response.games;
+                    processGames();
+                } else {
+                    throw new Error(`All proxy services failed. Last error: ${lastError}`);
+                }
+            } catch (error) {
+                console.error('Error loading games:', error);
+                showError(`Failed to load games. This could be due to:<br><br>• CORS restrictions in your browser<br>• Steam API being temporarily unavailable<br>• Invalid credentials<br><br>Try using the Manual Input option below or check your Steam API key and ID64.<br><br>Last error: ${error.message}`);
+            }
+        }
+
+        function processGames() {
+            // Process game data (no filtering)
+            filteredGames = gamesData.map(game => ({
+                ...game,
+                playtime_hours: Math.round(game.playtime_forever / 60 * 10) / 10,
+                last_played: game.rtime_last_played ? 
+                    new Date(game.rtime_last_played * 1000).toLocaleDateString() : 'Never',
+                cover_url: `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`
+            }));
+
+            displayGames();
+        }
+
+        function displayGames() {
+            credentialsForm.style.display = 'none';
+            steamControls.style.display = 'block';
+            gamesContainer.style.display = 'grid';
+            loadingState.style.display = 'none';
+            errorState.style.display = 'none';
+
+            gamesContainer.innerHTML = '';
+            
+            filteredGames.forEach(game => {
+                const gameElement = createGameElement(game);
+                gamesContainer.appendChild(gameElement);
+            });
+
+            // Set default sort
+            document.querySelector('.steam-sort-btn[data-sort="name"]').classList.add('active');
+        }
+
+        function createGameElement(game) {
+            const gameDiv = document.createElement('div');
+            gameDiv.className = 'steam-game';
+            gameDiv.setAttribute('data-name', game.name.toLowerCase());
+            gameDiv.setAttribute('data-playtime', game.playtime_hours);
+            gameDiv.setAttribute('data-last-played', game.last_played);
+            gameDiv.setAttribute('data-windows', game.playtime_windows_forever || 0);
+            gameDiv.setAttribute('data-mac', game.playtime_mac_forever || 0);
+            gameDiv.setAttribute('data-linux', game.playtime_linux_forever || 0);
+            gameDiv.setAttribute('data-deck', game.playtime_deck_forever || 0);
+
+            gameDiv.innerHTML = `
+                <div class="steam-cover-container">
+                    <img src="${game.cover_url}" alt="${game.name} Cover" class="steam-cover" 
+                         onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTIxYTJhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIENvdmVyPC90ZXh0Pjwvc3ZnPg==';">
+                </div>
+                <div class="steam-info">
+                    <h2>${game.name}</h2>
+                    <div class="steam-stats">
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">Total Playtime</span>
+                            <span class="steam-stat-value" style="color: #00c6ff; font-weight: 600;">${game.playtime_hours} hours</span>
+                        </div>
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">Last Played</span>
+                            <span class="steam-stat-value" style="color: #ff2d75;">${game.last_played}</span>
+                        </div>
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">Windows</span>
+                            <span class="steam-stat-value">${game.playtime_windows_forever || 0} min</span>
+                        </div>
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">Mac</span>
+                            <span class="steam-stat-value">${game.playtime_mac_forever || 0} min</span>
+                        </div>
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">Linux</span>
+                            <span class="steam-stat-value">${game.playtime_linux_forever || 0} min</span>
+                        </div>
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">Steam Deck</span>
+                            <span class="steam-stat-value">${game.playtime_deck_forever || 0} min</span>
+                        </div>
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">App ID</span>
+                            <span class="steam-stat-value">${game.appid}</span>
+                        </div>
+                        <div class="steam-stat">
+                            <span class="steam-stat-label">Has Workshop</span>
+                            <span class="steam-stat-value" style="color: ${game.has_workshop ? '#63be66' : '#f55e5e'}; font-weight: 600;">${game.has_workshop || false}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return gameDiv;
+        }
+
+        function filterGames(searchTerm) {
+            const games = document.querySelectorAll('.steam-game');
+            let visibleCount = 0;
+
+            games.forEach(game => {
+                const gameName = game.getAttribute('data-name');
+                if (gameName.includes(searchTerm)) {
+                    game.style.display = '';
+                    visibleCount++;
+                } else {
+                    game.style.display = 'none';
+                }
+            });
+
+            // Show/hide no results message
+            let noResults = document.querySelector('.steam-no-results');
+            if (visibleCount === 0 && searchTerm) {
+                if (!noResults) {
+                    noResults = document.createElement('div');
+                    noResults.className = 'steam-no-results';
+                    noResults.textContent = 'No games found matching your search';
+                    gamesContainer.appendChild(noResults);
+                }
+            } else if (noResults) {
+                noResults.remove();
+            }
+        }
+
+        function sortGames(sortType, direction) {
+            const games = Array.from(document.querySelectorAll('.steam-game'));
+            
+            games.sort((a, b) => {
+                let valueA, valueB;
+
+                switch (sortType) {
+                    case 'name':
+                        valueA = a.getAttribute('data-name');
+                        valueB = b.getAttribute('data-name');
+                        return direction === 'asc' ? 
+                            valueA.localeCompare(valueB) : 
+                            valueB.localeCompare(valueA);
+
+                    case 'playtime':
+                        valueA = parseFloat(a.getAttribute('data-playtime')) || 0;
+                        valueB = parseFloat(b.getAttribute('data-playtime')) || 0;
+                        break;
+
+                    case 'last_played':
+                        valueA = new Date(a.getAttribute('data-last-played')).getTime() || 0;
+                        valueB = new Date(b.getAttribute('data-last-played')).getTime() || 0;
+                        return direction === 'asc' ? valueA - valueB : valueB - valueA;
+
+                    case 'windows':
+                    case 'mac':
+                    case 'linux':
+                    case 'deck':
+                        valueA = parseFloat(a.getAttribute(`data-${sortType}`)) || 0;
+                        valueB = parseFloat(b.getAttribute(`data-${sortType}`)) || 0;
+                        break;
+
+                    default:
+                        return 0;
+                }
+
+                return direction === 'asc' ? valueA - valueB : valueB - valueA;
+            });
+
+            games.forEach(game => gamesContainer.appendChild(game));
+        }
+
+        function showLoading() {
+            credentialsForm.style.display = 'none';
+            steamControls.style.display = 'none';
+            gamesContainer.style.display = 'none';
+            loadingState.style.display = 'block';
+            errorState.style.display = 'none';
+        }
+
+        function showError(message) {
+            credentialsForm.style.display = 'none';
+            steamControls.style.display = 'none';
+            gamesContainer.style.display = 'none';
+            loadingState.style.display = 'none';
+            errorState.style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function showCredentialsForm() {
+            credentialsForm.style.display = 'block';
+            steamControls.style.display = 'none';
+            gamesContainer.style.display = 'none';
+            loadingState.style.display = 'none';
+            errorState.style.display = 'none';
+            document.getElementById('manualInputForm').style.display = 'none';
+        }
+
+        function showManualInput() {
+            credentialsForm.style.display = 'none';
+            steamControls.style.display = 'none';
+            gamesContainer.style.display = 'none';
+            loadingState.style.display = 'none';
+            errorState.style.display = 'none';
+            document.getElementById('manualInputForm').style.display = 'block';
+        }
+
+        // Manual game management
+        let manualGames = JSON.parse(localStorage.getItem('manualGames') || '[]');
+
+        document.getElementById('manualGameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const gameName = document.getElementById('gameName').value;
+            const playtimeHours = parseFloat(document.getElementById('playtimeHours').value) || 0;
+            const lastPlayed = document.getElementById('lastPlayed').value;
+            
+            const game = {
+                name: gameName,
+                playtime_hours: playtimeHours,
+                last_played: lastPlayed || 'Never',
+                appid: Date.now(), // Generate unique ID
+                playtime_forever: playtimeHours * 60,
+                playtime_windows_forever: playtimeHours * 60,
+                playtime_mac_forever: 0,
+                playtime_linux_forever: 0,
+                playtime_deck_forever: 0,
+                has_workshop: false,
+                has_market: false,
+                has_dlc: false,
+                cover_url: `https://cdn.cloudflare.steamstatic.com/steam/apps/placeholder/header.jpg`
+            };
+            
+            manualGames.push(game);
+            localStorage.setItem('manualGames', JSON.stringify(manualGames));
+            
+            // Clear form
+            document.getElementById('gameName').value = '';
+            document.getElementById('playtimeHours').value = '';
+            document.getElementById('lastPlayed').value = '';
+            
+            updateManualGamesList();
+        });
+
+        function updateManualGamesList() {
+            const container = document.getElementById('manualGamesContainer');
+            container.innerHTML = '';
+            
+            manualGames.forEach((game, index) => {
+                const gameDiv = document.createElement('div');
+                gameDiv.style.cssText = 'background: rgba(255, 255, 255, 0.05); padding: 10px; margin: 5px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;';
+                gameDiv.innerHTML = `
+                    <span>${game.name} (${game.playtime_hours}h)</span>
+                    <button onclick="removeManualGame(${index})" style="background: #ff2d75; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Remove</button>
+                `;
+                container.appendChild(gameDiv);
+            });
+        }
+
+        function removeManualGame(index) {
+            manualGames.splice(index, 1);
+            localStorage.setItem('manualGames', JSON.stringify(manualGames));
+            updateManualGamesList();
+        }
+
+        function displayManualGames() {
+            if (manualGames.length === 0) {
+                alert('Please add some games first!');
+                return;
+            }
+            
+            gamesData = manualGames;
+            processGames();
+        }
+
+        function clearStoredCredentials() {
+            // Clear stored credentials
+            localStorage.removeItem('steamApiKey');
+            localStorage.removeItem('steamId64');
+            
+            // Clear current values
+            steamApiKey = '';
+            steamId64 = '';
+            
+            // Clear form fields
+            document.getElementById('steamApiKey').value = '';
+            document.getElementById('steamId64').value = '';
+            
+            // Show credentials form
+            showCredentialsForm();
+        }
+
+        // Add spin animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

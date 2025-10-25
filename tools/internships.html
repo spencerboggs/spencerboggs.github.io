@@ -1,0 +1,214 @@
+<!--
+    Internship Sorter for Spencer Boggs
+    Copyright (c) 2025 Spencer Boggs
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="../icons/web_icon.png">
+	<link rel="stylesheet" href="../style.css">
+	<script defer src="internships.js"></script>
+	<title>Internship Sorter - Spencer Boggs</title>
+	<meta name="apple-mobile-web-app-capable" content="no">
+	<style>
+		/* Custom styles for internship sorter */
+		.title {
+			animation: title-fade-in 0.5s ease-in, title-typing-custom 1s steps(17, end), blink-caret 0.75s step-end;
+			animation-iteration-count: 1, 1, 3;
+			animation-delay: 0s, 0.4s;
+			max-width: 340px;
+		}
+		
+		.subtitle {
+			animation: subtitle-typing-custom 4s steps(50, end), blink-caret 0.75s step-end;
+			animation-delay: 0s, 2.35s;
+			animation-iteration-count: 1, 5;
+			max-width: 500px;
+		}
+		
+		@keyframes title-typing-custom {
+			0% { width: 0%; }
+			100% { width: 340px; }
+		}
+		
+		@keyframes subtitle-typing-custom {
+			0% { color: black; width: 0%; }
+			70% { color: white; width: 0; }
+			100% { color: white; width: 500px; }
+		}
+		
+		/* Table column adjustments */
+		#internshipsTable th:nth-child(1),
+		#internshipsTable td:nth-child(1) {
+			width: 8%;
+			text-align: center;
+		}
+		
+		#internshipsTable th:nth-child(2),
+		#internshipsTable td:nth-child(2) {
+			width: 18%;
+		}
+		
+		#internshipsTable th:nth-child(3),
+		#internshipsTable td:nth-child(3) {
+			width: 35%;
+		}
+		
+		#internshipsTable th:nth-child(4),
+		#internshipsTable td:nth-child(4) {
+			width: 12%;
+		}
+		
+		#internshipsTable th:nth-child(5),
+		#internshipsTable td:nth-child(5) {
+			width: 15%;
+			text-align: center;
+		}
+		
+		#internshipsTable th:nth-child(6),
+		#internshipsTable td:nth-child(6) {
+			width: 12%;
+			text-align: center;
+		}
+		
+		/* Center checkboxes */
+		#internshipsTable input[type="checkbox"] {
+			margin: 0 auto;
+			display: block;
+		}
+		
+		/* Sticky table header - robust approach */
+		.table-container {
+			position: relative;
+			overflow: visible;
+		}
+		
+		#internshipsTable {
+			position: relative;
+			width: 100%;
+		}
+		
+		#internshipsTable thead {
+			position: -webkit-sticky;
+			position: sticky;
+			top: 60px;
+			z-index: 10;
+			background: rgba(0, 0, 0, 0.95);
+			backdrop-filter: blur(10px);
+			box-shadow: 0 2px 10px rgba(0, 217, 255, 0.3);
+		}
+		
+		#internshipsTable thead th {
+			background: rgba(0, 217, 255, 0.2);
+			border-bottom: 2px solid #00d9ff;
+			position: relative;
+		}
+		
+		/* Ensure the table header stays visible */
+		#internshipsTable thead tr {
+			position: relative;
+		}
+		
+		/* Fix navbar transparency */
+		.navbar {
+			background-color: rgba(0, 0, 0, 0.95) !important;
+			z-index: 100 !important;
+		}
+	</style>
+</head>
+
+<body>
+	<section id="home"></section>
+	<div class="top">
+		<nav class="navbar">
+			<ul class="nav-links">
+				<a class="nav-button" href="../index.html#about">About</a>
+				<a class="nav-button" href="../index.html#projects">Projects</a>
+				<a class="nav-button" href="../index.html#contact">Contact</a>
+                <div class="dropdown">
+                    <a class="nav-button dropdown-toggle" href="#">More</a>
+                    <div class="dropdown-content">
+                        <a href="../gallery/photos.html">Photos</a>
+                        <a href="../entertainment/steam-games.html">Steam Games</a>
+                        <a href="internships.html">Internship Sorter</a>
+                        <!-- <a href="../entertainment/spotify-tracks.html">Spotify Tracks</a> -->
+                        <!-- <a href="../games/platformer.html">Platformer Game</a> -->
+                        <!-- <a href="../games/tron-runner.html">Tron Runner</a> -->
+                    </div>
+                </div>
+			</ul>
+		</nav>
+		<div class="profile-div">
+			<div class="home">
+				<h1 class="title" id="title">Internship Sorter</h1>
+				<p class="subtitle">Filter and track Summer 2026 tech internships.</p>
+				<p class="learn-more"><a href="#internships">Get Started</a></p>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<section id="internships"></section>
+	<div class="section">
+		<div class="internships-container">
+			<h2 class="section-title">Summer 2026 Tech Internships</h2>
+			
+			<div class="note">
+				<p>The data on this web app is gathered from the following GitHub repositories:</p>
+				<p><a href="https://github.com/SimplifyJobs/Summer2026-Internships" target="_blank">SimplifyJobs Summer 2026 Internships</a></p>
+				<p><a href="https://github.com/vanshb03/Summer2026-Internships" target="_blank">Vanshb03 Summer 2026 Internships</a></p>
+				<p>Filter by company, role, or location. Use a minus sign (-) to exclude results.</p>
+				<p>Ex: -remote in the location filter will remove all entries with a remote option.</p>
+			</div>
+
+			<div class="filters-container">
+				<div class="filter-group">
+					<input type="text" id="companyFilter" placeholder="Filter by company" class="filter-input">
+					<input type="text" id="roleFilter" placeholder="Filter by role" class="filter-input">
+					<input type="text" id="locationFilter" placeholder="Filter by location" class="filter-input">
+				</div>
+				<div class="button-group">
+					<button id="applyFilters" class="filter-button">Apply Filters</button>
+					<button id="clearFilters" class="filter-button">Clear Filters</button>
+					<button id="refreshData" class="filter-button">Refresh Data</button>
+					<button id="viewApplied" class="filter-button">View Applied Jobs</button>
+				</div>
+			</div>
+
+			<div id="activeFilters" class="active-filters" style="display: none;">
+				<p><strong>Active Filters:</strong></p>
+				<ul id="filterList"></ul>
+			</div>
+
+			<div class="results-info">
+				<h3 id="resultCount">Loading internships...</h3>
+			</div>
+
+			<div class="table-container">
+				<table id="internshipsTable">
+					<thead>
+						<tr>
+							<th>Applied</th>
+							<th>Company</th>
+							<th>Role</th>
+							<th>Location</th>
+							<th>Application Link</th>
+							<th>Date Posted</th>
+						</tr>
+					</thead>
+					<tbody id="internshipsTableBody">
+						<!-- Data will be populated by JavaScript -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<br>
+	<hr>
+</body>
+
+</html>

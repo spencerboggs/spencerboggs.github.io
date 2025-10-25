@@ -325,6 +325,52 @@ hr {
     padding-left: 5%;
 }
 
+/* Dropdown styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--background-color-2);
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    top: 100%;
+    left: 0;
+}
+
+.dropdown-content a {
+    color: var(--text-color);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    margin: 4px;
+}
+
+.dropdown-content a:hover {
+    background-color: rgba(0, 217, 255, 0.1);
+    color: var(--secondary-color);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropdown-toggle {
+    color: var(--secondary-color);
+}
+
 @media (min-width: 1300px) {
     .nav-links {
         width: 1300px;
@@ -570,12 +616,14 @@ h4 {
 
     .nav-links {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
         gap: 10px 8px;
         width: 100%;
         max-width: 100%;
         padding: 8px;
         text-align: center;
+        align-items: stretch;
     }
 
     .nav-button {
@@ -585,22 +633,133 @@ h4 {
         border: 2px solid #00d9ff;
         border-radius: 5px;
         background: rgba(0, 217, 255, 0.05);
+        width: 100%;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
     }
 
-    /* First 3 items take 2 columns each (row 1) */
+    /* First row: About, Projects */
     .nav-button:nth-child(1),
-    .nav-button:nth-child(2),
+    .nav-button:nth-child(2) {
+        grid-column: span 1;
+    }
+
+    /* Second row: Contact and More */
     .nav-button:nth-child(3) {
-        grid-column: span 2;
+        grid-column: 1 / span 1;
     }
 
-    /* Last 2 items - centered in row 2 */
-    .nav-button:nth-child(4) {
-        grid-column: 2 / span 2;
+    /* Ensure all nav buttons have consistent height */
+    .nav-button {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .nav-button:nth-child(5) {
-        grid-column: 4 / span 2;
+    /* Dropdown takes the second column of second row */
+    .dropdown {
+        grid-column: 2 / span 1;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        width: 100%;
+    }
+
+
+    .dropdown-toggle {
+        font-size: 13px;
+        margin: 0;
+        padding: 10px 8px;
+        border: 2px solid #00d9ff;
+        border-radius: 5px;
+        background: rgba(0, 217, 255, 0.05);
+        color: #00d9ff;
+        text-decoration: none;
+        cursor: pointer;
+        width: 100%;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        height: 100%;
+    }
+
+    .dropdown-toggle:hover {
+        background: rgba(0, 217, 255, 0.1);
+        color: #0ff;
+        text-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff;
+    }
+
+    /* Mobile dropdown content positioning */
+    .dropdown-content {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        min-width: 100%;
+        width: 100%;
+        z-index: 1000;
+        background-color: var(--background-color-2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    }
+
+    .dropdown-content a {
+        display: block;
+        padding: 12px 16px;
+        color: var(--text-color);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-radius: 6px;
+        margin: 4px;
+        text-align: center;
+    }
+
+    .dropdown-content a:hover {
+        background-color: rgba(0, 217, 255, 0.1);
+        color: var(--secondary-color);
+    }
+
+    /* Ensure dropdown works on touch devices */
+    .dropdown:hover .dropdown-content {
+        display: none; /* Disable hover on mobile */
+    }
+
+    .dropdown.active .dropdown-content {
+        display: block !important;
+    }
+
+    .dropdown.active .dropdown-toggle {
+        background: rgba(0, 217, 255, 0.1);
+        color: #0ff;
+    }
+}
+
+/* Additional mobile-specific styles for touch devices */
+@media (max-width: 768px) and (hover: none) {
+    .dropdown {
+        position: relative;
+    }
+    
+    .dropdown-content {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        z-index: 1000;
+        display: none;
+    }
+    
+    .dropdown.active .dropdown-content {
+        display: block !important;
     }
 
     /* Mobile profile section */
@@ -756,5 +915,359 @@ h4 {
     .contact-paragraph {
         margin: 10px 0;
         text-align: center;
+    }
+}
+
+/* ================================
+   INTERNSHIP SORTER STYLES
+   ================================ */
+
+.internships-container {
+    animation: text-fade-in 3s ease-in;
+}
+
+.note {
+    margin: 0 auto 30px auto;
+    max-width: 800px;
+    border: 2px solid #00d9ff;
+    border-radius: 8px;
+    padding: 20px;
+    background: rgba(0, 217, 255, 0.05);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
+    text-align: center;
+}
+
+.note p {
+    margin: 10px 0;
+    color: #ffffff;
+}
+
+.note a {
+    color: #00d9ff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.note a:hover {
+    color: #0ff;
+    text-shadow: 0 0 10px #00d9ff;
+}
+
+.filters-container {
+    margin: 30px 0;
+    padding: 20px;
+    border: 2px solid #00d9ff;
+    border-radius: 8px;
+    background: rgba(0, 217, 255, 0.02);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.filter-input {
+    padding: 12px 16px;
+    border: 2px solid #00d9ff;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14px;
+    min-width: 200px;
+    transition: all 0.3s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #0ff;
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.filter-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.filter-button {
+    padding: 12px 20px;
+    background: rgba(0, 217, 255, 0.1);
+    border: 2px solid #00d9ff;
+    border-radius: 6px;
+    color: #00d9ff;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.filter-button:hover {
+    background: #00d9ff;
+    color: #000000;
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.active-filters {
+    margin: 20px 0;
+    padding: 15px;
+    border: 2px solid #00d9ff;
+    border-radius: 8px;
+    background: rgba(0, 217, 255, 0.05);
+    text-align: center;
+}
+
+.active-filters ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.active-filters li {
+    background: #00d9ff;
+    color: #000000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.results-info {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.results-info h3 {
+    color: #00d9ff;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.table-container {
+    overflow-x: auto;
+    margin: 30px 0;
+    border: 2px solid #00d9ff;
+    border-radius: 8px;
+    background: rgba(0, 217, 255, 0.02);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
+}
+
+#internshipsTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14px;
+}
+
+#internshipsTable th {
+    background: rgba(0, 217, 255, 0.2);
+    color: #00d9ff;
+    padding: 15px 10px;
+    text-align: left;
+    border-bottom: 2px solid #00d9ff;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
+}
+
+#internshipsTable td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    color: #ffffff;
+    vertical-align: top;
+}
+
+#internshipsTable tr:hover {
+    background: rgba(0, 217, 255, 0.05);
+}
+
+#internshipsTable tr:nth-child(even) {
+    background: rgba(0, 217, 255, 0.02);
+}
+
+#internshipsTable tr:nth-child(even):hover {
+    background: rgba(0, 217, 255, 0.08);
+}
+
+#internshipsTable input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #00d9ff;
+}
+
+#internshipsTable a {
+    color: #00d9ff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+#internshipsTable a:hover {
+    color: #0ff;
+    text-shadow: 0 0 5px #00d9ff;
+}
+
+/* Modal styles */
+.modal {
+    display: block;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #000000;
+    margin: 5% auto;
+    padding: 30px;
+    border: 2px solid #00d9ff;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+}
+
+.close {
+    color: #00d9ff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    color: #0ff;
+    text-shadow: 0 0 10px #00d9ff;
+}
+
+.applied-jobs-list {
+    margin-top: 20px;
+}
+
+.applied-job {
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid #00d9ff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.applied-job:hover {
+    background: rgba(0, 217, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+}
+
+.applied-job h3 {
+    color: #00d9ff;
+    margin: 0 0 10px 0;
+    text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
+}
+
+.applied-job p {
+    margin: 5px 0;
+    color: #ffffff;
+}
+
+.status-checkboxes {
+    margin-top: 15px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.status-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.status-checkboxes input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #00d9ff;
+}
+
+.error-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff4444;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    font-family: 'Roboto Mono', monospace;
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+    animation: fade-in 0.3s ease-in;
+}
+
+/* Mobile styles for internship sorter */
+@media (max-width: 768px) {
+    .filter-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .filter-input {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .filter-button {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .table-container {
+        font-size: 12px;
+    }
+
+    #internshipsTable th,
+    #internshipsTable td {
+        padding: 8px 5px;
+    }
+
+    .modal-content {
+        margin: 10% auto;
+        padding: 20px;
+        width: 95%;
+    }
+
+    .applied-job {
+        padding: 15px;
+    }
+
+    .status-checkboxes {
+        flex-direction: column;
+        gap: 10px;
     }
 }
