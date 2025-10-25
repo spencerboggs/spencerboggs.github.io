@@ -39,7 +39,7 @@
 			</ul>
 		</nav>
 		<div class="profile-div">
-			<img class="profile-image" src="icons/pfp.png" alt="Profile Picture">
+			<img class="profile-image" id="profileImage" src="icons/pfp.png" alt="Profile Picture">
 			<div class="home">
 				<h1 class="title" id="title">Hi! I'm Spencer Boggs</h1>
 				<p class="subtitle">A Software Engineer and Front-End Developer.</p>
@@ -235,6 +235,43 @@
 	</div>
 	<br>
 	<hr>
+	
+	<script>
+		// Secret game easter egg - click profile picture 5 times fast
+		let clickCount = 0;
+		let clickTimer = null;
+		const SECRET_GAME_URL = 'games/secret-platformer.html';
+		
+		document.getElementById('profileImage').addEventListener('click', function() {
+			clickCount++;
+			
+			// Reset counter after 2 seconds of no clicks
+			clearTimeout(clickTimer);
+			clickTimer = setTimeout(() => {
+				clickCount = 0;
+			}, 2000);
+			
+			// Visual feedback for clicks
+			this.style.transform = 'scale(0.95)';
+			setTimeout(() => {
+				this.style.transform = 'scale(1)';
+			}, 100);
+			
+			// Check if 5 clicks reached
+			if (clickCount >= 5) {
+				// Add a subtle glow effect
+				this.style.boxShadow = '0 0 30px rgba(0, 217, 255, 0.8), 0 0 60px rgba(0, 217, 255, 0.4)';
+				
+				// Redirect to secret game after a brief delay
+				setTimeout(() => {
+					window.location.href = SECRET_GAME_URL;
+				}, 500);
+				
+				// Reset counter
+				clickCount = 0;
+			}
+		});
+	</script>
 </body>
 
 </html>
