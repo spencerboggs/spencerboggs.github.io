@@ -25,7 +25,6 @@ const PHOTO_LIST = [
     'photo3.jpg',
     'photo30.jpg',
     'photo31.jpg',
-    'photo32.jpg',
     'photo33.jpg',
     'photo34.jpg',
     'photo35.jpg',

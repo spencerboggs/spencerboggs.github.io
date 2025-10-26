@@ -81,6 +81,19 @@
             letter-spacing: 2px;
             color: #00d9ff;
             text-shadow: 0 0 10px rgba(0, 217, 255, 0.8), 0 0 20px rgba(0, 217, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .header-title.clicked {
+            animation: headerClick 0.6s ease;
+        }
+
+        @keyframes headerClick {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1) rotate(2deg); }
+            50% { transform: scale(0.95) rotate(-1deg); }
+            75% { transform: scale(1.05) rotate(0.5deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         /* Gallery Container */
@@ -561,9 +574,34 @@
             document.getElementById('emptyState').style.display = 'block';
         }
 
+        // Secret gallery access - click header 5 times
+        let headerClickCount = 0;
+        function handleHeaderClick() {
+            headerClickCount++;
+            console.log(`Header clicked ${headerClickCount}/5 times`);
+            
+            // Trigger click animation
+            const headerTitle = document.querySelector('.header-title');
+            headerTitle.classList.remove('clicked');
+            setTimeout(() => {
+                headerTitle.classList.add('clicked');
+            }, 10);
+            
+            if (headerClickCount >= 5) {
+                console.log('Secret gallery unlocked!');
+                window.location.href = 'art-gallery.html';
+            }
+        }
+
         // Initialize gallery on page load
         window.addEventListener('DOMContentLoaded', () => {
             initGallery();
+            
+            // Add secret click handler to header title
+            const headerTitle = document.querySelector('.header-title');
+            headerTitle.addEventListener('click', handleHeaderClick);
+            headerTitle.style.cursor = 'pointer';
+            headerTitle.title = 'Click me...';
             
             // Add lightbox event listeners
             document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
