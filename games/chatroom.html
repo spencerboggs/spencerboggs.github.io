@@ -7,6 +7,11 @@
     <link rel="icon" href="../icons/web_icon.png">
     <link rel="stylesheet" href="../style.css">
     <style>
+        .main-content {
+            margin-top: 80px; /* Add space for navbar */
+            padding: 20px;
+        }
+
         .chatroom-container {
             max-width: 800px;
             margin: 0 auto;
@@ -15,6 +20,61 @@
             border-radius: 10px;
             border: 2px solid #00d9ff;
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+        /* Fix navbar styling */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.95) !important;
+            z-index: 100 !important;
+            position: fixed !important;
+            top: 0 !important;
+            width: 100% !important;
+        }
+
+        .nav-button {
+            color: #00d9ff !important;
+            text-decoration: none !important;
+            padding: 10px 15px !important;
+            margin: 0 5px !important;
+            border-radius: 5px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(0, 217, 255, 0.2) !important;
+            color: white !important;
+        }
+
+        .dropdown-toggle {
+            position: relative !important;
+        }
+
+        .dropdown-content {
+            display: none !important;
+            position: absolute !important;
+            background-color: rgba(0, 0, 0, 0.95) !important;
+            border: 1px solid #00d9ff !important;
+            border-radius: 5px !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+            z-index: 1000 !important;
+            min-width: 200px !important;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block !important;
+        }
+
+        .dropdown-content a {
+            color: #00d9ff !important;
+            padding: 10px 15px !important;
+            text-decoration: none !important;
+            display: block !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(0, 217, 255, 0.2) !important;
+            color: white !important;
         }
 
         .room-controls {

@@ -84,8 +84,10 @@ class P2PChatroom {
 
     async initializePeer() {
         return new Promise((resolve, reject) => {
-            // Create peer with room code as ID for easy discovery
-            this.peer = new Peer(this.roomCode + '_' + Date.now(), {
+            // Use room code as peer ID for host, random for clients
+            const peerId = this.isHost ? this.roomCode : this.generatePeerId();
+            
+            this.peer = new Peer(peerId, {
                 host: 'peerjs-server.herokuapp.com',
                 port: 443,
                 path: '/',
@@ -104,19 +106,23 @@ class P2PChatroom {
                 this.updateConnectionStatus('connected');
                 
                 if (this.isHost) {
-                    this.addSystemMessage('Room is ready! Waiting for players...');
+                    this.addSystemMessage('Room is ready! Share code: ' + this.roomCode);
+                    this.addSystemMessage('Waiting for players to join...');
+                } else {
+                    this.addSystemMessage('Connected to PeerJS server');
                 }
                 
                 resolve(id);
             });
 
             this.peer.on('connection', (conn) => {
+                console.log('Incoming connection from:', conn.peer);
                 this.handleIncomingConnection(conn);
             });
 
             this.peer.on('error', (error) => {
                 console.error('Peer error:', error);
-                this.addSystemMessage('Connection error. Please try again.');
+                this.addSystemMessage('Connection error: ' + error.message);
                 reject(error);
             });
 
@@ -127,14 +133,18 @@ class P2PChatroom {
         });
     }
 
+    generatePeerId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+
     async connectToHost() {
-        // Try to connect to the host using the room code
-        const hostId = this.roomCode + '_host';
+        // Use room code as host peer ID
+        const hostId = this.roomCode;
         
         try {
+            this.addSystemMessage('Connecting to host...');
             const conn = this.peer.connect(hostId);
             this.setupConnection(conn);
-            this.addSystemMessage('Connecting to host...');
         } catch (error) {
             console.error('Failed to connect to host:', error);
             this.addSystemMessage('Could not find host. Make sure the room code is correct.');
