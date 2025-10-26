@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Chatroom</title>
+    <link rel="icon" href="../icons/web_icon.png">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .chatroom-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .room-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .room-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00d9ff;
+            border-radius: 5px;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+
+        .room-button {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00d9ff, #0099cc);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .room-button:hover {
+            background: linear-gradient(45deg, #0099cc, #00d9ff);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        .room-button:disabled {
+            background: #333;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .room-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 5px;
+            border-left: 3px solid #00d9ff;
+        }
+
+        .room-code {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #00d9ff;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #00d9ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .message.system {
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+            font-style: italic;
+        }
+
+        .message.user {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .message.own {
+            background: rgba(0, 217, 255, 0.3);
+            color: white;
+        }
+
+        .message-header {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 2px;
+        }
+
+        .message-content {
+            word-wrap: break-word;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00d9ff;
+            border-radius: 5px;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+
+        .send-button {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00d9ff, #0099cc);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(45deg, #0099cc, #00d9ff);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        .send-button:disabled {
+            background: #333;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .connection-status {
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .status-connected {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .status-disconnected {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+
+        .status-connecting {
+            background: rgba(255, 255, 0, 0.2);
+            color: #ffff00;
+            border: 1px solid #ffff00;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">Spencer Boggs</a>
+            <div class="nav-menu">
+                <a href="../index.html#about">About</a>
+                <a href="../index.html#projects">Projects</a>
+                <a href="../index.html#contact">Contact</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle">More</a>
+                    <div class="dropdown-content">
+                        <a href="../gallery/photos.html">Photos</a>
+                        <a href="../entertainment/steam-games.html">Steam Games</a>
+                        <a href="../entertainment/spotify-tracks.html">Spotify Tracks</a>
+                        <a href="../tools/internships.html">Internship Sorter</a>
+                        <a href="secret-platformer.html">Secret Game</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="chatroom-container">
+            <h1 style="text-align: center; color: #00d9ff; margin-bottom: 30px;">P2P Chatroom</h1>
+            
+            <!-- Room Creation/Joining -->
+            <div class="room-controls">
+                <button id="createRoomBtn" class="room-button">Create Room</button>
+                <input type="text" id="roomCodeInput" class="room-input" placeholder="Enter room code to join..." maxlength="6">
+                <button id="joinRoomBtn" class="room-button">Join Room</button>
+            </div>
+
+            <!-- Room Info (hidden initially) -->
+            <div id="roomInfo" class="room-info hidden">
+                <div>Room Code: <span id="roomCodeDisplay" class="room-code"></span></div>
+                <div>Connected Peers: <span id="peerCount">0</span></div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="chat-messages hidden">
+                <!-- Messages will be added here dynamically -->
+            </div>
+
+            <!-- Chat Input -->
+            <div id="chatInputContainer" class="chat-input-container hidden">
+                <input type="text" id="messageInput" class="chat-input" placeholder="Type your message..." maxlength="500">
+                <button id="sendBtn" class="send-button">Send</button>
+            </div>
+
+            <!-- Connection Status -->
+            <div id="connectionStatus" class="connection-status status-disconnected">
+                Disconnected
+            </div>
+        </div>
+    </div>
+
+    <script src="chatroom.js"></script>
+</body>
+</html>
