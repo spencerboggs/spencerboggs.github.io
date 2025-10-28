@@ -46,36 +46,64 @@ class GoogleSheetsFetcher {
                 return cached.data;
             }
 
-            // Build the API URL - use the public CSV export method
-            let apiUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
+            // Try multiple methods to get the data
+            const methods = [
+                // Method 1: CSV export
+                `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`,
+                // Method 2: Alternative CSV export
+                `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=0`,
+                // Method 3: TSV export
+                `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=tsv&gid=0`
+            ];
 
-            console.log('Fetching from:', apiUrl);
-
-            const response = await fetch(apiUrl);
+            let lastError = null;
             
-            if (!response.ok) {
-                console.error('Response error:', response.status, response.statusText);
-                throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+            for (const apiUrl of methods) {
+                try {
+                    console.log('Trying method:', apiUrl);
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                            'Accept': 'text/csv,text/plain,*/*'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        console.log(`Method failed with status: ${response.status}`);
+                        continue;
+                    }
+
+                    const text = await response.text();
+                    console.log('Response length:', text.length);
+                    console.log('Response preview:', text.substring(0, 200));
+                    
+                    if (!text || text.trim() === '') {
+                        console.log('Empty response, trying next method');
+                        continue;
+                    }
+
+                    // Parse the data (CSV or TSV)
+                    const rows = apiUrl.includes('tsv') ? this.parseTSV(text) : this.parseCSV(text);
+                    console.log('Parsed rows:', rows.length);
+
+                    // Cache the result
+                    this.cache.set(cacheKey, {
+                        data: rows,
+                        timestamp: Date.now()
+                    });
+
+                    return rows;
+
+                } catch (error) {
+                    console.log('Method failed:', error.message);
+                    lastError = error;
+                    continue;
+                }
             }
 
-            const csvText = await response.text();
-            console.log('CSV response length:', csvText.length);
-            console.log('CSV preview:', csvText.substring(0, 200));
-            
-            if (!csvText || csvText.trim() === '') {
-                throw new Error('No data found in sheet');
-            }
-
-            // Parse CSV to array of arrays
-            const rows = this.parseCSV(csvText);
-
-            // Cache the result
-            this.cache.set(cacheKey, {
-                data: rows,
-                timestamp: Date.now()
-            });
-
-            return rows;
+            throw lastError || new Error('All methods failed to fetch data');
 
         } catch (error) {
             console.error('Error fetching Google Sheets data:', error);
@@ -271,6 +299,25 @@ class GoogleSheetsExample {
             if (line.trim() === '') continue;
             
             const row = this.parseCSVLine(line);
+            rows.push(row);
+        }
+        
+        return rows;
+    }
+
+    /**
+     * Parse TSV text to array of arrays
+     * @param {string} tsvText - TSV text content
+     * @returns {Array} - Array of rows (each row is an array of cells)
+     */
+    parseTSV(tsvText) {
+        const lines = tsvText.split('\n');
+        const rows = [];
+        
+        for (const line of lines) {
+            if (line.trim() === '') continue;
+            
+            const row = line.split('\t');
             rows.push(row);
         }
         
