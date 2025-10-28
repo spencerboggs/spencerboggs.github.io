@@ -46,40 +46,36 @@ class GoogleSheetsFetcher {
                 return cached.data;
             }
 
-            // Build the API URL
-            let apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/`;
-            
-            if (sheetName && range) {
-                apiUrl += `${encodeURIComponent(sheetName)}!${range}`;
-            } else if (sheetName) {
-                apiUrl += `${encodeURIComponent(sheetName)}`;
-            } else if (range) {
-                apiUrl += range;
-            } else {
-                apiUrl += 'A:Z'; // Default to all columns
-            }
+            // Build the API URL - use the public CSV export method
+            let apiUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
 
             console.log('Fetching from:', apiUrl);
 
             const response = await fetch(apiUrl);
             
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                console.error('Response error:', response.status, response.statusText);
+                throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
             }
 
-            const data = await response.json();
+            const csvText = await response.text();
+            console.log('CSV response length:', csvText.length);
+            console.log('CSV preview:', csvText.substring(0, 200));
             
-            if (!data.values) {
+            if (!csvText || csvText.trim() === '') {
                 throw new Error('No data found in sheet');
             }
 
+            // Parse CSV to array of arrays
+            const rows = this.parseCSV(csvText);
+
             // Cache the result
             this.cache.set(cacheKey, {
-                data: data.values,
+                data: rows,
                 timestamp: Date.now()
             });
 
-            return data.values;
+            return rows;
 
         } catch (error) {
             console.error('Error fetching Google Sheets data:', error);
@@ -260,6 +256,75 @@ class GoogleSheetsExample {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /**
+     * Parse CSV text to array of arrays
+     * @param {string} csvText - CSV text content
+     * @returns {Array} - Array of rows (each row is an array of cells)
+     */
+    parseCSV(csvText) {
+        const lines = csvText.split('\n');
+        const rows = [];
+        
+        for (const line of lines) {
+            if (line.trim() === '') continue;
+            
+            const row = this.parseCSVLine(line);
+            rows.push(row);
+        }
+        
+        return rows;
+    }
+
+    /**
+     * Parse a single CSV line handling quoted fields
+     * @param {string} line - CSV line
+     * @returns {Array} - Array of field values
+     */
+    parseCSVLine(line) {
+        const fields = [];
+        let currentField = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            
+            if (char === '"') {
+                if (inQuotes && line[i + 1] === '"') {
+                    // Escaped quote
+                    currentField += '"';
+                    i++; // Skip next quote
+                } else {
+                    // Toggle quote state
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                // Field separator
+                fields.push(currentField);
+                currentField = '';
+            } else {
+                currentField += char;
+            }
+        }
+        
+        // Add the last field
+        fields.push(currentField);
+        
+        return fields;
+    }
+
+    /**
+     * Get sheet GID for a given sheet name
+     * This is a simplified approach - in practice, you might need to fetch sheet metadata
+     * @param {string} sheetName - Name of the sheet
+     * @returns {string} - Sheet GID (defaults to 0 for first sheet)
+     */
+    getSheetGid(sheetName) {
+        // For now, return 0 (first sheet)
+        // In a more robust implementation, you'd fetch the sheet metadata
+        // to get the actual GID for each sheet name
+        return '0';
     }
 }
 
