@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Urbex Simulator</title>
+	<meta name="description" content="Urbex Simulator is a first-person multiplayer urban exploration game built in Unity 6.">
+	<style>
+		@font-face {
+			font-family: 'Blowbrush';
+			src: url('fonts/blowbrush.regular.ttf') format('truetype');
+		}
+
+		@font-face {
+			font-family: 'Graffiti Regular';
+			src: url('fonts/Graffiti-Regular.ttf') format('truetype');
+		}
+
+		:root {
+			--bg: #070709;
+			--bg-2: #101012;
+			--panel: rgba(10, 10, 12, 0.78);
+			--text: #f5f0e8;
+			--muted: rgba(245, 240, 232, 0.72);
+			--accent: #ff5a1f;
+			--accent-2: #00d4ff;
+			--accent-3: #b7ff4f;
+			--line: rgba(255, 255, 255, 0.1);
+			--shadow: rgba(0, 0, 0, 0.55);
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			color: var(--text);
+			font-family: 'Blowbrush', cursive;
+			background:
+				radial-gradient(circle at 20% 20%, rgba(255, 90, 31, 0.16), transparent 28%),
+				radial-gradient(circle at 80% 10%, rgba(0, 212, 255, 0.16), transparent 22%),
+				radial-gradient(circle at 75% 80%, rgba(183, 255, 79, 0.11), transparent 28%),
+				linear-gradient(135deg, #050506 0%, #0b0b0e 42%, #050506 100%);
+			overflow-x: hidden;
+		}
+
+		body::before,
+		body::after {
+			content: '';
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		body::before {
+			background:
+				linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+			background-size: 72px 72px;
+			mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 85%);
+			opacity: 0.8;
+		}
+
+		body::after {
+			background:
+				radial-gradient(circle at 15% 18%, rgba(255, 90, 31, 0.28) 0 2px, transparent 2px),
+				radial-gradient(circle at 40% 42%, rgba(0, 212, 255, 0.22) 0 1.5px, transparent 2px),
+				radial-gradient(circle at 63% 27%, rgba(183, 255, 79, 0.2) 0 2px, transparent 2px),
+				radial-gradient(circle at 84% 61%, rgba(255, 90, 31, 0.2) 0 2px, transparent 2px),
+				radial-gradient(circle at 30% 78%, rgba(0, 212, 255, 0.2) 0 1.5px, transparent 2px);
+			filter: blur(0.2px);
+			opacity: 0.75;
+		}
+
+		a {
+			color: inherit;
+		}
+
+		.page {
+			position: relative;
+			z-index: 1;
+			width: min(1180px, calc(100% - 32px));
+			margin: 0 auto;
+			padding: 24px 0 72px;
+		}
+
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			gap: 16px;
+			align-items: center;
+			padding: 10px 0 22px;
+			font-size: 0.95rem;
+			color: var(--muted);
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.topbar a {
+			text-decoration: none;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+			padding-bottom: 2px;
+		}
+
+		.hero {
+			position: relative;
+			overflow: hidden;
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			background:
+				linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 30%),
+				linear-gradient(135deg, rgba(255, 90, 31, 0.14), rgba(0, 212, 255, 0.08) 48%, rgba(183, 255, 79, 0.06));
+			box-shadow: 0 24px 90px var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+			border-radius: 28px;
+			padding: 26px 30px 24px;
+					min-height: 0;
+			display: grid;
+					gap: 18px;
+			align-items: stretch;
+		}
+
+		.hero::before {
+			content: '';
+			position: absolute;
+			inset: auto -12% -26% auto;
+			width: 420px;
+			height: 420px;
+			background: radial-gradient(circle, rgba(255, 90, 31, 0.35), transparent 64%);
+			transform: rotate(-12deg);
+			filter: blur(10px);
+		}
+
+		.hero::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background:
+				linear-gradient(115deg, transparent 0 34%, rgba(255, 255, 255, 0.1) 35%, transparent 36% 100%),
+				linear-gradient(160deg, transparent 0 52%, rgba(0, 212, 255, 0.07) 53%, transparent 54% 100%);
+			mix-blend-mode: screen;
+			opacity: 0.5;
+			pointer-events: none;
+		}
+
+		.hero-grid {
+			position: relative;
+			z-index: 1;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr);
+			gap: 16px;
+			align-items: start;
+		}
+
+		.title-stack {
+			display: flex;
+			flex-direction: column;
+				min-width: 0;
+					justify-content: flex-start;
+					gap: 12px;
+		}
+
+		.eyebrow {
+			font-size: 0.95rem;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: var(--accent-2);
+			text-shadow: 0 0 18px rgba(0, 212, 255, 0.45);
+		}
+
+		h1,
+		h2,
+		h3,
+		.section-title {
+			font-family: 'Graffiti Regular', 'Impact', sans-serif;
+			letter-spacing: 0.03em;
+			margin: 0;
+			font-weight: 400;
+		}
+
+		h1 {
+					font-size: clamp(1.45rem, 3.35vw, 2.95rem);
+			line-height: 0.88;
+			text-transform: uppercase;
+			margin-top: 12px;
+					max-width: 100%;
+					width: auto;
+					white-space: normal;
+					letter-spacing: 0.01em;
+					overflow-wrap: normal;
+					word-break: normal;
+					text-wrap: balance;
+			text-shadow:
+				0 0 10px rgba(255, 90, 31, 0.45),
+				0 0 30px rgba(0, 212, 255, 0.2),
+				0 6px 0 rgba(0, 0, 0, 0.65);
+		}
+
+		.subtitle {
+					max-width: 700px;
+					font-size: 1.02rem;
+					line-height: 1.55;
+			color: var(--muted);
+			text-wrap: pretty;
+		}
+
+		.cta-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 14px;
+					margin-top: 2px;
+		}
+
+		.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 14px 20px 12px;
+			border-radius: 999px;
+			text-decoration: none;
+			border: 1px solid rgba(255, 255, 255, 0.16);
+			box-shadow: 0 18px 35px rgba(0, 0, 0, 0.35);
+			transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+		}
+
+		.button.primary {
+			color: #fff;
+			background: linear-gradient(135deg, rgba(255, 90, 31, 0.95), rgba(255, 90, 31, 0.62));
+			border-color: rgba(255, 90, 31, 0.55);
+		}
+
+		.button.secondary {
+			color: var(--text);
+			background: rgba(255, 255, 255, 0.05);
+		}
+
+		.button:hover {
+			transform: translateY(-2px) rotate(-0.5deg);
+			border-color: rgba(255, 255, 255, 0.28);
+		}
+
+		.poster {
+			position: relative;
+			display: grid;
+				min-width: 0;
+			align-content: start;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+			padding: 22px;
+			border-radius: 22px;
+			background:
+				linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+				rgba(3, 3, 5, 0.62);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+		}
+
+		.tag {
+			display: inline-flex;
+			grid-column: 1 / -1;
+			width: fit-content;
+			padding: 8px 12px 7px;
+			border-radius: 999px;
+			background: rgba(0, 0, 0, 0.36);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			color: #fff;
+			font-size: 0.92rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.poster-stat {
+			display: grid;
+			gap: 12px;
+			padding: 16px;
+			height: 100%;
+			border-radius: 16px;
+			background: rgba(0, 0, 0, 0.24);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+		}
+
+		.poster-stat strong {
+			font-family: 'Graffiti Regular', 'Impact', sans-serif;
+			font-size: 1.8rem;
+			font-weight: 400;
+			color: var(--accent-3);
+			text-transform: uppercase;
+		}
+
+		.poster-stat span {
+			color: var(--muted);
+			line-height: 1.55;
+		}
+
+		.section {
+			margin-top: 22px;
+			padding: 26px;
+			border-radius: 24px;
+			background: var(--panel);
+			border: 1px solid rgba(255, 255, 255, 0.09);
+			box-shadow: 0 18px 70px var(--shadow);
+			backdrop-filter: blur(10px);
+		}
+
+		.section-title {
+			font-size: clamp(2.4rem, 5vw, 4rem);
+			color: var(--accent-2);
+			text-transform: uppercase;
+			margin-bottom: 12px;
+			text-shadow: 0 0 18px rgba(0, 212, 255, 0.25);
+		}
+
+		.section-copy {
+			max-width: 920px;
+			color: var(--muted);
+			line-height: 1.72;
+			font-size: 1.02rem;
+		}
+
+		.feature-grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 16px;
+			margin-top: 20px;
+		}
+
+		.feature-card {
+			padding: 18px;
+			border-radius: 20px;
+			background:
+				linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
+				rgba(0, 0, 0, 0.26);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+		}
+
+		.feature-card h3 {
+					font-size: 1.75rem;
+			margin-bottom: 8px;
+			color: #fff;
+			text-transform: uppercase;
+		}
+
+		.feature-card p {
+			margin: 0;
+			color: var(--muted);
+			line-height: 1.65;
+			font-size: 1rem;
+		}
+
+		.two-column {
+			display: grid;
+			grid-template-columns: 1.1fr 0.9fr;
+			gap: 16px;
+			margin-top: 16px;
+		}
+
+		.info-list {
+			display: grid;
+			gap: 14px;
+		}
+
+		.info-item {
+			padding: 16px 18px;
+			border-radius: 18px;
+			background: rgba(0, 0, 0, 0.24);
+			border: 1px solid rgba(255, 255, 255, 0.09);
+		}
+
+		.info-item strong {
+			display: block;
+			margin-bottom: 8px;
+			font-family: 'Graffiti Regular', 'Impact', sans-serif;
+					font-size: 1.3rem;
+			color: var(--accent);
+			text-transform: uppercase;
+		}
+
+		.info-item span {
+			color: var(--muted);
+			line-height: 1.65;
+		}
+
+		.controls {
+			display: grid;
+			gap: 12px;
+		}
+
+		.control-row {
+			display: flex;
+			justify-content: space-between;
+			gap: 16px;
+			align-items: center;
+			padding: 12px 14px;
+			border-radius: 14px;
+			background: rgba(255, 255, 255, 0.04);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+		}
+
+		.control-row span:first-child {
+			color: #fff;
+		}
+
+		.control-row span:last-child {
+			color: var(--muted);
+			text-align: right;
+		}
+
+		.roadmap {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 14px;
+			margin-top: 16px;
+		}
+
+		.roadmap li {
+			list-style: none;
+			padding: 16px 18px 16px 48px;
+			border-radius: 18px;
+			background: rgba(0, 0, 0, 0.24);
+			border: 1px solid rgba(255, 255, 255, 0.09);
+			color: var(--muted);
+			line-height: 1.6;
+			position: relative;
+		}
+
+		.roadmap li::before {
+			content: '•';
+			position: absolute;
+			left: 18px;
+			top: 10px;
+			color: var(--accent-3);
+			font-family: 'Graffiti Regular', 'Impact', sans-serif;
+			font-size: 2rem;
+			line-height: 1;
+		}
+
+		.footer {
+			margin-top: 22px;
+			padding: 18px 0 0;
+			color: rgba(245, 240, 232, 0.56);
+			text-align: center;
+			font-size: 0.92rem;
+			letter-spacing: 0.07em;
+			text-transform: uppercase;
+		}
+
+		@media (max-width: 920px) {
+			.hero-grid,
+			.two-column,
+			.feature-grid,
+			.roadmap {
+				grid-template-columns: 1fr;
+			}
+
+			.hero {
+				padding: 24px;
+				min-height: unset;
+			}
+
+			.poster {
+				grid-template-columns: 1fr;
+			}
+
+			.topbar {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.page {
+				width: min(100% - 20px, 1180px);
+				padding-top: 12px;
+			}
+
+			.hero,
+			.section {
+				border-radius: 18px;
+				padding: 18px;
+			}
+
+			h1 {
+					font-size: clamp(1.7rem, 9vw, 3rem);
+			}
+
+			.subtitle,
+			.section-copy,
+			.feature-card p,
+			.info-item span,
+			.control-row {
+				font-size: 0.97rem;
+			}
+
+			.control-row {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="page">
+		<div class="topbar">
+			<span>Steam game landing page</span>
+			<a href="index.html">Back to portfolio</a>
+		</div>
+
+		<section class="hero" aria-labelledby="hero-title">
+			<div class="hero-grid">
+				<div class="title-stack">
+					<div>
+						<div class="eyebrow">First-person multiplayer urban exploration</div>
+						<h1 id="hero-title">Urbex Simulator</h1>
+					</div>
+
+					<p class="subtitle">
+						Urbex Simulator is a first-person multiplayer game about exploring abandoned places with friends. Bring a camera, flashlight, spray paint, and glowsticks, pick a map in the lobby, and see how far you get before the building, the layout, or the fall damage stops you.
+					</p>
+
+					<div class="cta-row">
+						<a class="button primary" href="#features">See the rundown</a>
+						<a class="button secondary" href="#roadmap">What’s still coming</a>
+					</div>
+
+					<div class="poster" aria-label="Game highlights">
+						<div class="tag">WIP / placeholder name</div>
+						<div class="poster-stat">
+							<strong>Open the lobby</strong>
+							<span>The host sets the map, friends join by Steam ID or invite, and the preview lets everyone see the place before it starts.</span>
+						</div>
+						<div class="poster-stat">
+							<strong>Take notes in paint</strong>
+							<span>Use spray paint or the paintball gun to tag paths, mark hazards, or leave a message for whoever comes through next.</span>
+						</div>
+						<div class="poster-stat">
+							<strong>Stay audible</strong>
+							<span>Push-to-talk voice chat keeps the group in the loop when someone spots a hole, a broken rail, or something moving in the dark.</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section" id="features" aria-labelledby="features-title">
+			<h2 class="section-title" id="features-title">How It Plays</h2>
+			<p class="section-copy">
+				There is no strict win condition right now. You drop in, explore at your own pace, take photos, tag walls, call out hazards, and push the map as far as you can before somebody makes a bad decision.
+			</p>
+
+			<div class="feature-grid">
+				<article class="feature-card">
+					<h3>Movement</h3>
+					<p>Walk, sprint, jump, and climb short ledges or climbable surfaces. Sprint drains stamina, so save it for long runs or bad landings.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Inventory</h3>
+					<p>Carry your camera, flashlight, spray paint, paintball gun, and glowstick bundle through a 5-slot hotbar. Pick things up with E and drop them with Q.</p>
+				</article>
+				<article class="feature-card">
+					<h3>Multiplayer</h3>
+					<p>Host a lobby, pick a map together, and explore as a group. Everyone keeps their own photo roll, and the lobby shows you a preview before the run starts.</p>
+				</article>
+			</div>
+		</section>
+
+		<section class="section" aria-labelledby="items-title">
+			<h2 class="section-title" id="items-title">Tools You Carry</h2>
+			<div class="two-column">
+				<div class="info-list">
+					<div class="info-item">
+						<strong>Camera</strong>
+						<span>Press <span aria-hidden="true">C</span> to bring up the viewfinder, zoom with the scroll wheel, and take photos of the places you want to remember.</span>
+					</div>
+					<div class="info-item">
+						<strong>Flashlight</strong>
+						<span>A physical flashlight you can pick up and drop. Its wide beam stays useful even if your FOV changes, and some lights have limited battery.</span>
+					</div>
+					<div class="info-item">
+						<strong>Spray paint</strong>
+						<span>Tag walls, mark routes, or leave messages for your crew. Adjust the spray size with the scroll wheel and pick your color with <span aria-hidden="true">P</span>.</span>
+					</div>
+					<div class="info-item">
+						<strong>Paintball gun</strong>
+						<span>Shoot paint from a distance when you want to tag hard-to-reach spots or start trouble from across the room.</span>
+					</div>
+					<div class="info-item">
+						<strong>Glowsticks</strong>
+						<span>Drop or place glowsticks to light the way, mark danger, or keep your bearings when a flashlight is not enough.</span>
+					</div>
+					<div class="info-item">
+						<strong>Voice chat</strong>
+						<span>Push-to-talk is on <span aria-hidden="true">V</span> by default, so you can keep the cross-talk manageable while everyone is getting spooked.</span>
+					</div>
+				</div>
+
+				<div class="controls" aria-label="Controls">
+					<div class="control-row"><span>Move</span><span>W A S D</span></div>
+					<div class="control-row"><span>Sprint</span><span>Left Shift</span></div>
+					<div class="control-row"><span>Jump</span><span>Space</span></div>
+					<div class="control-row"><span>Interact / pickup</span><span>E</span></div>
+					<div class="control-row"><span>Drop held item</span><span>Q</span></div>
+					<div class="control-row"><span>Take photo</span><span>Left Click</span></div>
+					<div class="control-row"><span>Zoom / spray size</span><span>Scroll wheel</span></div>
+					<div class="control-row"><span>Paint color picker</span><span>P</span></div>
+					<div class="control-row"><span>Voice chat</span><span>V</span></div>
+					<div class="control-row"><span>Pause menu</span><span>Escape</span></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section" id="roadmap" aria-labelledby="roadmap-title">
+			<h2 class="section-title" id="roadmap-title">What's Coming</h2>
+			<p class="section-copy">
+				The game is still in active development, so expect rough edges and things changing between updates. The long-term goal is to give players more places to explore, more ways to get into trouble, and more reasons to keep coming back.
+			</p>
+
+			<ul class="roadmap">
+				<li>More maps and locations with different moods and layouts.</li>
+				<li>Hazards like rotten structures, flooding, power cycling, and other places that actively fight back.</li>
+				<li>More game modes beyond free-roam exploration, including paintball and hide-and-seek style play.</li>
+				<li>Customization for clothing, hold styles, visual effects, and noise effects.</li>
+				<li>A proper tutorial / onboarding flow so new players can learn without getting yelled at too hard.</li>
+				<li>More items, objectives, and exploration tools for longer sessions with friends.</li>
+			</ul>
+		</section>
+
+		<footer class="footer">
+			Built for Unity 6 • Local photos stay on your machine • Explore, photograph, tag, survive
+		</footer>
+	</main>
+</body>
+</html>
