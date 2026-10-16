@@ -1,0 +1,1 @@
+const i={name:"Spencer Boggs",siteUrl:"https://spencerboggs.github.io",raidSignalUrl:"https://rw-signaling.vercel.app/api/signal",contact:{email:"spencerdboggs@gmail.com",github:"https://github.com/spencerboggs",linkedin:"https://www.linkedin.com/in/spencerboggs"}};export{i as s};
