@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-mode="dark" data-theme-palette="azure">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Downloadable Windows scripts that compare a PC against its platform rated CPU clock, memory speed, PCIe link, storage throughput and idle temperatures.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="canonical" href="https://spencerboggs.github.io/pc-check/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Idiqlat:wght@200;300;400&display=swap" rel="stylesheet">
+<script src="/assets/theme.js"></script>
+<link rel="stylesheet" href="/assets/pc-check.css">
+<title>PC hardware checks | Spencer Boggs</title>
+</head>
+<body class="hc-page">
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/apps">
+  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="1.5"></rect><rect x="9.5" y="9.5" width="5" height="5" rx="0.8"></rect><path d="M9 3v2M12 3v2M15 3v2M9 19v2M12 19v2M15 19v2M3 9h2M3 12h2M3 15h2M19 9h2M19 12h2M19 15h2"></path></svg>
+  <span>Hardware check</span>
+  <small>pc-check</small>
+</a>
+    <div class="header-actions">
+      <span class="crumb">all builds</span>
+      <a class="btn btn-sm btn-ghost" href="/pc-check">All checks</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"></path></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.2 8.2 0 1 0 10.5 10.5Z"></path></svg>
+</button>
+    </div>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <p class="kicker">PC scripts / 12 builds</p>
+      <h1>Hardware checks <em>against rated rates.</em></h1>
+      <p class="hero-lede">One script per platform and GPU vendor. Each reads the machine, compares the parts with the rates that build should hold, and names the most likely software-side limiter. No install, no changes.</p>
+      <ul class="hero-tags">
+        <li>12 combinations</li>
+        <li>Windows 10 / 11</li>
+        <li>Read-only</li>
+        <li>Report to Desktop</li>
+      </ul>
+    </div>
+    <div class="hero-side">
+      <div class="hero-fact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"></path></svg>
+        <p><b>Per platform</b>AM3, AM4, AM5, LGA 1700 and 1851, each with the memory generation and PCIe generation it actually uses.</p>
+      </div>
+      <div class="hero-fact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 19V5M4 19h16"></path><path d="m7 15 4-5 3 3 5-7"></path></svg>
+        <p><b>Per GPU</b>NVIDIA reads clocks, power limit and temperature through nvidia-smi. AMD and Intel get link and display checks only.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container hc-body">
+  <section class="panel" aria-labelledby="pick">
+    <header class="panel-head">
+      <div>
+        <p class="kicker">01. Pick a script</p>
+        <h2 id="pick">Socket on the left, GPU across the top</h2>
+        <p>Each file is a single download and self-contained; nothing else is fetched at run time.</p>
+      </div>
+    </header>
+    <div class="panel-body">
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead><tr><th scope="col">Platform</th><th scope="col">AMD Radeon</th><th scope="col">NVIDIA GeForce</th><th scope="col">Intel Arc</th></tr></thead>
+          <tbody>
+<tr><th scope="row"><span>AM3</span><small>DDR3</small></th><td><a class="matrix-link" href="/pc-check/am3-amd"><span>AMD Radeon</span><small>AM3 + AMD</small></a></td><td><a class="matrix-link" href="/pc-check/am3-nvidia"><span>NVIDIA GeForce</span><small>AM3 + NVIDIA</small></a></td><td><a class="matrix-link" href="/pc-check/am3-intel"><span>Intel Arc</span><small>AM3 + Intel</small></a></td></tr>
+<tr><th scope="row"><span>AM4</span><small>DDR4</small></th><td><a class="matrix-link" href="/pc-check/am4-amd"><span>AMD Radeon</span><small>AM4 + AMD</small></a></td><td><a class="matrix-link" href="/pc-check/am4-nvidia"><span>NVIDIA GeForce</span><small>AM4 + NVIDIA</small></a></td><td><a class="matrix-link" href="/pc-check/am4-intel"><span>Intel Arc</span><small>AM4 + Intel</small></a></td></tr>
+<tr><th scope="row"><span>AM5</span><small>DDR5</small></th><td><a class="matrix-link" href="/pc-check/am5-amd"><span>AMD Radeon</span><small>AM5 + AMD</small></a></td><td><a class="matrix-link" href="/pc-check/am5-nvidia"><span>NVIDIA GeForce</span><small>AM5 + NVIDIA</small></a></td><td><a class="matrix-link" href="/pc-check/am5-intel"><span>Intel Arc</span><small>AM5 + Intel</small></a></td></tr>
+<tr><th scope="row"><span>LGA 1700 / 1851</span><small>DDR4 / DDR5</small></th><td><a class="matrix-link" href="/pc-check/lga-amd"><span>AMD Radeon</span><small>LGA 1700 / 1851 + AMD</small></a></td><td><a class="matrix-link" href="/pc-check/lga-nvidia"><span>NVIDIA GeForce</span><small>LGA 1700 / 1851 + NVIDIA</small></a></td><td><a class="matrix-link" href="/pc-check/lga-intel"><span>Intel Arc</span><small>LGA 1700 / 1851 + Intel</small></a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="panel-copy">Not sure which one? Every script checks the socket, chipset and GPU vendor first and reports a mismatch instead of guessing. Downloading the AM5 + NVIDIA file on an AM4 board tells you so on the first line.</p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="what">
+    <header class="panel-head">
+      <div>
+        <p class="kicker">02. Coverage</p>
+        <h2 id="what">What every script compares</h2>
+      </div>
+    </header>
+    <div class="panel-body">
+      <div class="check-grid">
+<div class="check-card"><h3>CPU clock</h3><p>Rated base clock, sustained clock under an all-core load, power-plan CPU cap, memory integrity.</p></div>
+<div class="check-card"><h3>Memory</h3><p>Configured speed against the platform target, channel count, capacity, module identity.</p></div>
+<div class="check-card"><h3>PCIe link</h3><p>Width and generation the card actually trained at, plus the card default power limit on NVIDIA.</p></div>
+<div class="check-card"><h3>Display</h3><p>Current refresh rate against the maximum the adapter reports.</p></div>
+<div class="check-card"><h3>Storage</h3><p>Sequential write and uncached read on the system drive, against the speed of its class.</p></div>
+<div class="check-card"><h3>Power and heat</h3><p>Peak draw estimate, idle ACPI thermal zones and post-load temperature.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="reading">
+    <header class="panel-head">
+      <div>
+        <p class="kicker">03. Reading it</p>
+        <h2 id="reading">One summary line, then the detail</h2>
+      </div>
+    </header>
+    <div class="panel-body">
+      <ul class="legend">
+        <li><span class="pill pass">PASS</span>At or above the baseline for this platform.</li>
+        <li><span class="pill warn">WARN</span>Working, but below what the setup should hold.</li>
+        <li><span class="pill fail">FAIL</span>Outside the baseline, or the wrong part for the script.</li>
+        <li><span class="pill skip">SKIP</span>Not exposed by Windows, or needs administrator rights or a vendor tool.</li>
+      </ul>
+      <p class="panel-copy">The console ends with a likely limiter and up to three findings, and the same text is written to a report on the Desktop. A build that passes every row is running at the rates its parts were sold at; a failing row names the subsystem to look at before buying anything.</p>
+      <ul class="limits">
+        <li><strong>PSU wattage is not readable.</strong> Only the label has it. The script prints the peak draw it expects.</li>
+        <li><strong>Thermal zones need administrator rights.</strong> Without them, CPU temperatures are skipped, not guessed.</li>
+        <li><strong>AMD and Intel GPU sensors are not exposed.</strong> Use Adrenalin or Arc Control for clocks and power limits.</li>
+        <li><strong>Only the system drive is benchmarked.</strong> Other drives are listed but not tested.</li>
+      </ul>
+    </div>
+  </section>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>Spencer Boggs / pc-check</p>
+    <div class="footer-links">
+      <a href="/apps">Apps</a>
+      <a href="/pc-check">All checks</a>
+      <a href="/">Portfolio</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

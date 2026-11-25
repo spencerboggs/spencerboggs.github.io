@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-mode="dark" data-theme-palette="azure">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tools and side projects: PC hardware checks, an upgrade planner, the raid wheel, games, photos.">
+<meta name="color-scheme" content="dark light">
+<title>Spencer Boggs | Apps</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Idiqlat:wght@200;300;400&display=swap" rel="stylesheet">
+<script src="/assets/theme.js"></script>
+<link rel="stylesheet" href="/_astro/brain._dr4F7Uf.css">
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 0.35rem;
+    background: var(--color-bg-elevated);
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+  .theme-toggle:hover { border-color: var(--color-accent-dim); color: var(--color-accent); background: var(--color-surface); }
+  .theme-toggle svg { width: 1.05rem; height: 1.05rem; }
+  .theme-toggle .icon-sun { display: none; }
+  html[data-theme-mode="light"] .theme-toggle .icon-sun { display: block; }
+  html[data-theme-mode="light"] .theme-toggle .icon-moon { display: none; }
+
+  .apps-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 2.25rem 0 1rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .apps-head h2 { margin: 0; font-size: 1.15rem; font-weight: 500; letter-spacing: -0.01em; }
+  .apps-head .mono { color: var(--color-muted); font-size: 0.7rem; letter-spacing: 0.1em; }
+  .apps-note { margin: -0.25rem 0 1.15rem; max-width: 38rem; color: var(--color-muted); font-size: 0.9rem; line-height: 1.6; }
+  .apps-card { position: relative; }
+  .apps-card .path { display: block; overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<header class="border-b border-line bg-bg/90 backdrop-blur-md">
+  <div class="container-wide flex h-14 items-center justify-between gap-3">
+    <a href="/" class="font-display text-sm font-normal text-muted no-underline hover:text-accent">Exit to portfolio</a>
+    <div class="flex items-center gap-3">
+      <span class="mono text-muted/70 text-xs hidden sm:inline">/apps</span>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"></path></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8.2 8.2 0 1 0 10.5 10.5Z"></path></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="min-h-screen overflow-x-clip py-8 sm:py-10">
+  <div class="container-wide">
+    <p class="mono m-0 text-accent">/apps</p>
+    <h1 class="mt-2 mb-3 text-[clamp(1.8rem,6vw,3rem)]">Apps</h1>
+    <p class="mb-8 max-w-xl text-muted leading-relaxed">
+      Tools I use, followed by the side pages.
+    </p>
+
+    <section aria-labelledby="tools-heading">
+      <div class="apps-head">
+        <h2 id="tools-heading">Tools</h2>
+        <span class="mono">04</span>
+      </div>
+      <p class="apps-note">Utilities. Each one runs in the browser unless it says otherwise.</p>
+      <div class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+        <a href="https://spencerboggs.github.io/pc-part-recommender/" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/pc-part-recommender</div>
+          <h3 class="m-0 text-xl">PC Upgrade Advisor</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Current parts plus a budget in, upgrade list out. The Windows build reads the hardware itself.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/pc-check" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/pc-check</div>
+          <h3 class="m-0 text-xl">Hardware Check</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Scripts that hold a machine against its platform's rated clocks, memory speed, PCIe width, storage and idle heat.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/resume-builder" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/resume-builder</div>
+          <h3 class="m-0 text-xl">Resume Builder</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Preview the resume and download the .tex or .pdf.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/receipt-split" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/receipt-split</div>
+          <h3 class="m-0 text-xl">Receipt Split</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Item-by-item split of a receipt between people.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+      </div>
+    </section>
+
+    <section aria-labelledby="fun-heading">
+      <div class="apps-head">
+        <h2 id="fun-heading">Fun</h2>
+        <span class="mono">08</span>
+      </div>
+      <p class="apps-note">Games, pages and things that exist because I wanted them to.</p>
+      <div class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+        <a href="/raid-wheel" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/raid-wheel</div>
+          <h3 class="m-0 text-xl">Raid Wheel</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Rolls raid roles and punishments for Destiny 2.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/raid-wheel-online" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/raid-wheel-online</div>
+          <h3 class="m-0 text-xl">Raid Wheel Online</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">The same wheel, shared between devices.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="https://spencerboggs.github.io/color-game/" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/color-game</div>
+          <h3 class="m-0 text-xl">Color Game</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Find the odd tile before the timer runs out. Later levels add tiles and movement.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/brain" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/brain</div>
+          <h3 class="m-0 text-xl">Brain</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">A floating web of languages, tools, people and ideas.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/games" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/games</div>
+          <h3 class="m-0 text-xl">Games</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Platformer, Tron runner, life sim and pips. Most are works in progress.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/favorite-games" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/favorite-games</div>
+          <h3 class="m-0 text-xl">My Favorite Games</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">The best games to ever exist, imo. :D</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/photos" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/photos</div>
+          <h3 class="m-0 text-xl">My Favorite Photos</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">Photos I've taken that I like.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+        <a href="/linktree" class="apps-card group flex flex-col gap-2 rounded border border-line bg-bg-elevated p-5 no-underline text-inherit transition hover:-translate-y-0.5 hover:border-accent-dim">
+          <div class="mono text-accent text-xs path">/linktree</div>
+          <h3 class="m-0 text-xl">Linktree</h3>
+          <p class="m-0 flex-1 text-muted text-[0.98rem]">All my links in one spot.</p>
+          <span class="mono mt-2 text-accent text-xs group-hover:text-text">Open</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
